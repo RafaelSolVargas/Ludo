@@ -1,7 +1,7 @@
 # Ludo
 A version of the tradional game Ludo
-### Developing
-- Rafael Vargas -> False
+### Is modifying the project?
+- Rafael Vargas -> True
 - Thiago Bewiahn -> False
 - Kalleo Ouriques -> False
 
