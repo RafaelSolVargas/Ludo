@@ -4,36 +4,31 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QCursor
 
-class OptionButton():
-    def __init__(self, number):
-        self.widget = QPushButton(f'{number}')
-        self.number = number
+class CasaInicialPos:
+
+    def __init__(self, color):
+        self.widget = QPushButton()
+        self.color = color
+        
         self.style = [
                             '''
         *{
             border: 2px solid 'white';
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 27px;
-            width: 50px;
             
+            
+            border-radius: 40px;
             color: 'white';
-            padding: 15px 0;
-            
-
-            margin-top:50px; 
-            margin-left: 40px;
-            margin-right: 40px;
         }
         *:hover{
-            background: '#494949';
+            background: 'white';
         }
         ''']
 
         self.init()
+        
 
     def init(self):
-        
+        self.widget.setFixedWidth(80)
+        self.widget.setFixedHeight(80)
         self.widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.widget.setStyleSheet(self.style[0])
-        
