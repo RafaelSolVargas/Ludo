@@ -4,12 +4,13 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QCursor
 
+
 class OptionButton():
     def __init__(self, number):
         self.widget = QPushButton(f'{number}')
         self.number = number
         self.style = [
-                            '''
+            '''
         *{
             border: 2px solid 'white';
             font-size: 18px;
@@ -31,7 +32,6 @@ class OptionButton():
         self.init()
 
     def init(self):
-        
+
         self.widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.widget.setStyleSheet(self.style[0])
-        

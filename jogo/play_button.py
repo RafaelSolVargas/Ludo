@@ -4,11 +4,12 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QCursor
 
+
 class PlayButton():
     def __init__(self,):
         self.widget = QPushButton("PLAY")
         self.style = [
-                                            '''
+            '''
         *{
             border: 4px solid '#ff6400';
             border-radius: 25px;
@@ -27,9 +28,8 @@ class PlayButton():
         ''']
 
         self.init()
-        
+
     def init(self):
-        
+
         self.widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.widget.setStyleSheet(self.style[0])
-        
