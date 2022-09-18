@@ -55,7 +55,7 @@ class Control:
         self.__setDice()
 
         r_b = RollButton('ROLL DICE')
-        r_b.widget.clicked.connect(self.roll)
+        r_b.widget.clicked.connect(lambda: self.roll())
 
         self.widgets['roll_button'].append(r_b)
         self.grid.addWidget(r_b.widget, 2, 0)
