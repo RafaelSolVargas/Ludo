@@ -1,0 +1,12 @@
+class PositionsColor:
+    YELLOW = 'Yellow'
+    BLUE = 'Blue'
+    RED = 'Red'
+    GREEN = 'Green'
+    WHITE = 'White'
+    RED_GREEN = 'Red_Green'
+    RED_YELLOW = 'Red_Yellow'
+    BLUE_GREEN = 'Blue_Green'
+    BLUE_YELLOW = 'Blue_Yellow'
+    FULL = 'Full'
+    NONE = 'None'
