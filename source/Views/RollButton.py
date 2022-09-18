@@ -3,23 +3,15 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QCursor
 
 
-class RollButton:
-    def __init__(self, name):
-        self.__widget = QPushButton(name)
+class RollButton(QPushButton):
+    def __init__(self, name: str):
+        super().__init__(name)
         self.__style = self.__getStyle()
-        self.__widget.clicked.connect(self.roll)
-        self.__start()
+        self.__config()
 
-    def roll(self):
-        print('Aoba')
-
-    @property
-    def widget(self) -> QPushButton:
-        return self.__widget
-
-    def __start(self):
-        self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
-        self.__widget.setStyleSheet(self.__style)
+    def __config(self):
+        self.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+        self.setStyleSheet(self.__style)
 
     def __getStyle(self) -> str:
         return '''
@@ -32,10 +24,8 @@ class RollButton:
             padding: 15px;
             margin-left: 270px;
             margin-right: 270px;
-
-
-
             }
+
             *:hover{
             background: '#caeabd';
             }

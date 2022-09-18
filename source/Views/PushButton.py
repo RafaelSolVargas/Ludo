@@ -4,24 +4,20 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QCursor
 
 
-class PushButton:
+class PushButton(QPushButton):
     def __init__(self, text: str, style: str, callback: Callable = None):
-        self.__widget = QPushButton(f'{text}')
+        super().__init__(f'{text}')
         self.__text = text
         self.__style = style
-        self.__start()
+        self.__config()
 
         if callback is not None:
-            self.__widget.clicked.connect(callback)
-
-    @property
-    def widget(self) -> QPushButton:
-        return self.__widget
+            self.clicked.connect(callback)
 
     @property
     def text(self) -> str:
         return self.__text
 
-    def __start(self):
-        self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
-        self.__widget.setStyleSheet(self.__style)
+    def __config(self):
+        self.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+        self.setStyleSheet(self.__style)

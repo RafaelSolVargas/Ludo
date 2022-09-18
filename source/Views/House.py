@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.HouseColor import HouseColor
-from play.casa_inicial_pos import CasaInicialPos
+from Views.HousePosition import HousePosition
 
 
 class House:
@@ -18,7 +18,7 @@ class House:
     def __setGrid(self) -> None:
         for l in range(2):
             for c in range(2):
-                self.__grid.addWidget(CasaInicialPos(self.__color).widget, l,  c)
+                self.__grid.addWidget(HousePosition(self.__color).widget, l,  c)
 
     def __start(self) -> None:
         self.__widget.setStyleSheet(self.__style)

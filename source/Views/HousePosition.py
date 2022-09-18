@@ -3,7 +3,7 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QCursor
 
 
-class CasaInicialPos:
+class HousePosition:
     def __init__(self, color: str):
         self.__widget = QPushButton()
         self.__color = color
@@ -11,13 +11,11 @@ class CasaInicialPos:
         self.style = '''
         *{
             border: 2px solid 'white';
-            
-            
             border-radius: 40px;
             color: 'white';
         }
         *:hover{
-            background: 'white';
+            background: 'black';
         }
         '''
 
