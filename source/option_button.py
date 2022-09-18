@@ -1,15 +1,29 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, QFileDialog, QGridLayout
-from PyQt5.QtGui import QPixmap
-from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import QPushButton
+from PyQt5 import QtCore
 from PyQt5.QtGui import QCursor
 
-class OptionButton():
-    def __init__(self, number):
-        self.widget = QPushButton(f'{number}')
-        self.number = number
-        self.style = [
-                            '''
+
+class OptionButton:
+    def __init__(self, number: int):
+        self.__widget = QPushButton(f'{number}')
+        self.__number = number
+        self.__style = self.__getStyle()
+        self.__start()
+
+    @property
+    def widget(self) -> QPushButton:
+        return self.__widget
+
+    @property
+    def number(self) -> int:
+        return self.__number
+
+    def __start(self):
+        self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+        self.__widget.setStyleSheet(self.__style)
+
+    def __getStyle(self) -> str:
+        return '''
         *{
             border: 2px solid 'white';
             font-size: 18px;
@@ -28,12 +42,4 @@ class OptionButton():
         *:hover{
             background: '#494949';
         }
-        ''']
-
-        self.init()
-
-    def init(self):
-        
-        self.widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
-        self.widget.setStyleSheet(self.style[0])
-        
+        '''

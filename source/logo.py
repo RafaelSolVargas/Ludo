@@ -1,21 +1,24 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, QFileDialog, QGridLayout
+from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QCursor
-from option_button import OptionButton
+from PyQt5 import QtCore
+
 
 class Logo:
-    
-    def __init__(self, image, margin):
+    def __init__(self, image: str, margin: int):
+        self.__widget = QLabel()
+        self.__image = image
+        self.__margin_top = margin
+        self.__start()
 
-        self.widget = QLabel()
-        self.image = image
-        self.margin_top = margin
-        self.init()
+    @property
+    def widget(self) -> QLabel:
+        return self.__widget
 
-    def init(self):
-        
-        self.widget.setPixmap(QPixmap(self.image))
-        self.widget.setAlignment(QtCore.Qt.AlignCenter)
-        self.widget.setStyleSheet(f"margin-top: {self.margin_top}px;")
+    @property
+    def image(self) -> str:
+        return self.__image
+
+    def __start(self):
+        self.__widget.setPixmap(QPixmap(self.__image))
+        self.__widget.setAlignment(QtCore.Qt.AlignCenter)
+        self.__widget.setStyleSheet(f"margin-top: {self.__margin_top}px;")
