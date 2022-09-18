@@ -1,32 +1,30 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, QFileDialog, QGridLayout
-from PyQt5.QtGui import QPixmap
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QWidget, QGridLayout
 from play.quadrado import Quadrado
 from play.casa_inicial import CasaInicial
 from play.casa_final import CasaFinal
 
 
-class Tabuleiro:
+class Board:
+    def __init__(self, width: int = 1000, height: int = 1000):
+        self.__width = width
+        self.__height = height
+        self.__widget = QWidget()
+        self.__grid = QGridLayout()
 
-    def __init__(self, width=1000, height=1000):
-        self.width = width
-        self.height = height
-        self.widget = QWidget()
-        self.grid = QGridLayout()
+        self.__start()
 
-        self.init()
+    def __setWindow(self):
+        self.__widget.setFixedWidth(self.__width)
+        self.__widget.setFixedHeight(self.__height)
+        self.__widget.setStyleSheet("background: white;")
 
-    def windget_set(self):
+    @property
+    def widget(self) -> QWidget:
+        return self.__widget
 
-        self.widget.setFixedWidth(self.width)
-        self.widget.setFixedHeight(self.height)
-        self.widget.setStyleSheet("background: white;")
-
-    def set_tabuleiro(self):
+    def __setBoardWidgets(self):
         n_pins_grid = QGridLayout()
-        self.grid.addLayout(n_pins_grid, 4, 0)
+        self.__grid.addLayout(n_pins_grid, 4, 0)
 
         for linha in range(3):
             for coluna in range(3):
@@ -149,11 +147,11 @@ class Tabuleiro:
                     # casa azul
                     apoio_grid.addWidget(CasaInicial('blue').widget, linha, coluna)
 
-                self.grid.addLayout(apoio_grid, linha, coluna)
+                self.__grid.addLayout(apoio_grid, linha, coluna)
 
-    def init(self):
+    def __start(self):
 
-        self.windget_set()
+        self.__setWindow()
 
-        self.set_tabuleiro()
-        self.widget.setLayout(self.grid)
+        self.__setBoardWidgets()
+        self.__widget.setLayout(self.__grid)
