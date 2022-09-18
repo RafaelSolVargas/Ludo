@@ -35,4 +35,8 @@ class CasaInicialPos:
         self.__widget.setFixedWidth(80)
         self.__widget.setFixedHeight(80)
         self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+        self.__widget.clicked.connect(self.teste)
         self.__widget.setStyleSheet(self.style[0])
+
+    def teste(self) -> None:
+        print('Aoba2')

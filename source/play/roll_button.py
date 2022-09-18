@@ -7,7 +7,11 @@ class RollButton:
     def __init__(self, name):
         self.__widget = QPushButton(name)
         self.__style = self.__getStyle()
+        self.__widget.clicked.connect(self.roll)
         self.__start()
+
+    def roll(self):
+        print('Aoba')
 
     @property
     def widget(self) -> QPushButton:
