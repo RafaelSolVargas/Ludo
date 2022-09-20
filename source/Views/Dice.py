@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
-from play.dice_ball import DiceBall
+from Views.DicePoint import DicePoint
 from random import randint
 
 
@@ -32,56 +32,55 @@ class Dice:
         return self.__widget
 
     def __setDice(self):
-        print(self.__number)
         for linha in range(3):
             for coluna in range(3):
                 if self.__number == 1:
                     if linha == 1 and coluna == 1:
-                        self.__grid.addWidget(DiceBall('black', int(
+                        self.__grid.addWidget(DicePoint('black', int(
                             self.__width/9)).widget, linha, coluna)
                     else:
-                        self.__grid.addWidget(DiceBall('white', int(
+                        self.__grid.addWidget(DicePoint('white', int(
                             self.__width/9)).widget, linha, coluna)
 
                 elif self.__number == 2:
                     if (linha == 0 and coluna == 2) or (linha == 2 and coluna == 0):
-                        self.__grid.addWidget(DiceBall('black', int(
+                        self.__grid.addWidget(DicePoint('black', int(
                             self.__width/9)).widget, linha, coluna)
                     else:
-                        self.__grid.addWidget(DiceBall('white', int(
+                        self.__grid.addWidget(DicePoint('white', int(
                             self.__width/9)).widget, linha, coluna)
 
                 elif self.__number == 3:
                     if (linha == 0 and coluna == 2) or (linha == 1 and coluna == 1) or (linha == 2 and coluna == 0):
-                        self.__grid.addWidget(DiceBall('black', int(
+                        self.__grid.addWidget(DicePoint('black', int(
                             self.__width/9)).widget, linha, coluna)
                     else:
-                        self.__grid.addWidget(DiceBall('white', int(
+                        self.__grid.addWidget(DicePoint('white', int(
                             self.__width/9)).widget, linha, coluna)
 
                 elif self.__number == 4:
 
                     if (linha == 0 and coluna == 0) or (linha == 0 and coluna == 2) or (linha == 2 and coluna == 0) or (linha == 2 and coluna == 2):
-                        self.__grid.addWidget(DiceBall('black', int(
+                        self.__grid.addWidget(DicePoint('black', int(
                             self.__width/9)).widget, linha, coluna)
                     else:
-                        self.__grid.addWidget(DiceBall('white', int(
+                        self.__grid.addWidget(DicePoint('white', int(
                             self.__width/9)).widget, linha, coluna)
 
                 elif self.__number == 5:
 
                     if (linha == 0 and coluna == 0) or (linha == 0 and coluna == 2) or (linha == 2 and coluna == 0) or (linha == 2 and coluna == 2) or (linha == 1 and coluna == 1):
-                        self.__grid.addWidget(DiceBall('black', int(
+                        self.__grid.addWidget(DicePoint('black', int(
                             self.__width/9)).widget, linha, coluna)
                     else:
-                        self.__grid.addWidget(DiceBall('white', int(
+                        self.__grid.addWidget(DicePoint('white', int(
                             self.__width/9)).widget, linha, coluna)
 
                 elif self.__number == 6:
 
                     if coluna == 0 or coluna == 2:
-                        self.__grid.addWidget(DiceBall('black', int(
+                        self.__grid.addWidget(DicePoint('black', int(
                             self.__width/9)).widget, linha, coluna)
                     else:
-                        self.__grid.addWidget(DiceBall('white', int(
+                        self.__grid.addWidget(DicePoint('white', int(
                             self.__width/9)).widget, linha, coluna)

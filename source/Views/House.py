@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.HouseColor import HouseColor
-from play.casa_inicial_pos import CasaInicialPos
+from Views.HousePosition import HousePosition
 
 
 class House:
@@ -18,7 +18,7 @@ class House:
     def __setGrid(self) -> None:
         for l in range(2):
             for c in range(2):
-                self.__grid.addWidget(CasaInicialPos(self.__color).widget, l,  c)
+                self.__grid.addWidget(HousePosition(self.__color).widget, l,  c)
 
     def __start(self) -> None:
         self.__widget.setStyleSheet(self.__style)
@@ -29,7 +29,7 @@ class House:
         if self.__color == HouseColor.BLUE:
             return '''
             *{  
-                border-radius: 161px;
+                border-radius: 150px;
                 background-color: 'blue';
                 border: 2px solid 'black';  
             }
@@ -37,7 +37,7 @@ class House:
         elif self.__color == HouseColor.YELLOW:
             return '''
             *{  
-                border-radius: 161px;
+                border-radius: 150px;
                 background-color: 'yellow';
                 border: 2px solid 'black';  
             }
@@ -45,7 +45,7 @@ class House:
         elif self.__color == HouseColor.GREEN:
             return '''
             *{  
-                border-radius: 161px;
+                border-radius: 150px;
                 background-color: 'green';
                 border: 2px solid 'black';  
             }
@@ -53,7 +53,7 @@ class House:
         else:  # Red
             return '''
             *{  
-                border-radius: 161px;
+                border-radius: 150px;
                 background-color: 'red';
                 border: 2px solid 'black';  
             }

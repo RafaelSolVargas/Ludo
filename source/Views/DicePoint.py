@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget
 
 
-class DiceBall:
+class DicePoint:
     def __init__(self, diceType: str, width: int) -> None:
         self.__widget = QWidget()
         self.__width = width

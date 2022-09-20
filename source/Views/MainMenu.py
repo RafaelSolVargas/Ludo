@@ -1,17 +1,16 @@
 from typing import List
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout
+from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Views.Image import Image
 from Views.PushButton import PushButton
-from play.BoardWindow import BoardWindow
-import sys
+from Views.Board import Board
+from Views.Panel import Panel
 
 
-class MainMenu:
-    def __init__(self, width: int = 640):
-        self.__width = width
-        self.__app = QApplication(sys.argv)
+class MainMenu(QMainWindow):
+    def __init__(self):
+        super().__init__()
         self.__window = QWidget()
         self.__grid = QGridLayout()
 
@@ -20,15 +19,11 @@ class MainMenu:
         self.__pinsButtons: List[PushButton] = []
         self.__playButton: PushButton = None
 
-        self.__widgets = {
-            "n_players_buttons": [],
-            "n_pins_buttons": [],
-            "logos": [],
-            "play_button": []
-        }
+        self.__board: Board = None
+        self.__panel: Panel = None
 
     def __setWindow(self) -> None:
-        self.__window.setWindowTitle(' ')
+        self.__window.setWindowTitle('LUDO')
         self.__window.setStyleSheet("background: black;")
         self.__window.move(640, 108)
 
@@ -40,8 +35,9 @@ class MainMenu:
 
         # Cria os botões de escolher players e pinos
         for index in range(1, 5):
-            self.__playerButtons.append(PushButton(index, ButtonsStyles.MainMenuOptions))
             self.__pinsButtons.append(PushButton(index, ButtonsStyles.MainMenuOptions))
+        for index in range(2, 5):
+            self.__playerButtons.append(PushButton(index, ButtonsStyles.MainMenuOptions))
 
         # Cria o botão de play e conecta com o método Play quando clicado
         self.__playButton = PushButton('PLAY', ButtonsStyles.PlayButton, self.__playButtonClick)
@@ -55,44 +51,47 @@ class MainMenu:
                 row = 0
             else:
                 row = 3
-            self.__grid.addWidget(image.widget, row, 0)
+            self.__grid.addWidget(image, row, 0)
 
         # Adiciona os botões de players na grid
         playersGrid = QGridLayout()
         for button in self.__playerButtons:
             column = int(button.text) - 1
-            playersGrid.addWidget(button.widget, 0, column)
+            playersGrid.addWidget(button, 0, column)
         self.__grid.addLayout(playersGrid, 2, 0)
 
         # Adiciona os botões de pins na grid
         pinsGrid = QGridLayout()
         for button in self.__pinsButtons:
             column = int(button.text) - 1
-            pinsGrid.addWidget(button.widget, 0, column)
+            pinsGrid.addWidget(button, 0, column)
         self.__grid.addLayout(pinsGrid, 4, 0)
 
         # Adiciona o button de Play na grid
-        self.__grid.addWidget(self.__playButton.widget, 5, 0)
+        self.__grid.addWidget(self.__playButton, 5, 0)
 
     def __clear(self) -> None:
         # Clear all the buttons
         for button in self.__pinsButtons:
-            button.widget.hide()
+            button.hide()
 
         for button in self.__playerButtons:
-            button.widget.hide()
+            button.hide()
 
         for image in self.__images:
-            image.widget.hide()
+            image.hide()
 
-        self.__playButton.widget.hide()
+        self.__playButton.hide()
 
     def __playButtonClick(self):
         self.__clear()
         self.__window.setStyleSheet("background: white;")
         self.__window.setWindowTitle('LUDO')
 
-        self.__grid.addWidget(BoardWindow().widget, 0, 0)
+        self.__board = Board()
+        self.__panel = Panel()
+        self.__grid.addWidget(self.__board, 0, 0)
+        self.__grid.addWidget(self.__panel, 0, 1)
 
     def run(self):
         self.__setWindow()
@@ -100,5 +99,3 @@ class MainMenu:
         self.__setGrids()
         self.__window.setLayout(self.__grid)
         self.__window.show()
-
-        sys.exit(self.__app.exec())

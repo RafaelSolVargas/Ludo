@@ -1,17 +1,16 @@
-from turtle import position
 from typing import List
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.HouseColor import HouseColor
 from Config.PositionsColor import PositionsColor
-from play.Position import Position
-from play.House import House
+from Views.Position import Position
+from Views.House import House
 
 
-class Board:
+class Board(QWidget):
     def __init__(self, width: int = 1000, height: int = 1000):
+        super().__init__()
         self.__width = width
         self.__height = height
-        self.__widget = QWidget()
         self.__grid = QGridLayout()
         # YELLOW - BLUE - GREEN - RED
         self.__houses: List[House] = []
@@ -21,8 +20,6 @@ class Board:
         self.__start()
 
     def __setWindow(self):
-        self.__widget.setFixedWidth(self.__width)
-        self.__widget.setFixedHeight(self.__height)
         self.__topLeftGrid = QGridLayout()
         self.__topRightGrid = QGridLayout()
         self.__topMidGrid = QGridLayout()
@@ -32,16 +29,12 @@ class Board:
         self.__botLeftGrid = QGridLayout()
         self.__botRightGrid = QGridLayout()
         self.__botMidGrid = QGridLayout()
-        self.__widget.setStyleSheet("background: white;")
-
-    @property
-    def widget(self) -> QWidget:
-        return self.__widget
+        self.setStyleSheet("background: white;")
 
     def __start(self):
         self.__setWindow()
         self.__setBoardWidgets()
-        self.__widget.setLayout(self.__grid)
+        self.setLayout(self.__grid)
 
     def __setBoardWidgets(self):
         n_pins_grid = QGridLayout()

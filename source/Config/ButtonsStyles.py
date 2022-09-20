@@ -36,3 +36,19 @@ class ButtonsStyles:
             background: '#494949';
         }
         '''
+    RollButton = '''
+        *{
+        border: 4px solid 'green';
+        border-radius: 25px;
+        font-size: 32px;
+        font-weight: bold;
+        color: 'green';
+        padding: 15px;
+        margin-left: 270px;
+        margin-right: 270px;
+        }
+
+        *:hover{
+        background: '#caeabd';
+        }
+        '''

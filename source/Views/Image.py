@@ -3,22 +3,18 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import QtCore
 
 
-class Image:
+class Image(QLabel):
     def __init__(self, image: str, margin: int):
-        self.__widget = QLabel()
+        super().__init__()
         self.__imagePath = image
         self.__margin_top = margin
-        self.__start()
-
-    @property
-    def widget(self) -> QLabel:
-        return self.__widget
+        self.__config()
 
     @property
     def imagePath(self) -> str:
         return self.__imagePath
 
-    def __start(self):
-        self.__widget.setPixmap(QPixmap(self.__imagePath))
-        self.__widget.setAlignment(QtCore.Qt.AlignCenter)
-        self.__widget.setStyleSheet(f"margin-top: {self.__margin_top}px;")
+    def __config(self):
+        self.setPixmap(QPixmap(self.__imagePath))
+        self.setAlignment(QtCore.Qt.AlignCenter)
+        self.setStyleSheet(f"margin-top: {self.__margin_top}px;")
