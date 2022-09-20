@@ -3,14 +3,14 @@ from Views.DicePoint import DicePoint
 from random import randint
 
 
-class Dice:
+class DiceHerdado(QWidget):
     def __init__(self, width: int):
-        self.__widget = QWidget()
+        super().__init__()
         self.__width = width
         self.__grid = QGridLayout()
         self.__number = randint(1, 6)
         self.__style = '''
-                    *{
+                    Dice {
                         border: 4px solid 'black';
                         border-radius : 20px;
                         background-color: white;
@@ -20,8 +20,8 @@ class Dice:
         self.__start()
 
     def __setWidget(self) -> None:
-        self.__widget.setLayout(self.__grid)
-        self.__widget.setStyleSheet(self.__style)
+        self.setLayout(self.__grid)
+        self.setStyleSheet(self.__style)
 
     def __start(self) -> None:
         self.__setWidget()

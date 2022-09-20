@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
+from Views.DiceHerdado import DiceHerdado
 from Views.RollButton import RollButton
 from Views.PushButton import PushButton
 from Config.ButtonsStyles import ButtonsStyles
@@ -25,13 +26,13 @@ class Panel(QWidget):
         self.__setDice()
 
     def __clearDice(self):
-        self.__dice.hide()
+        self.__dice.widget.hide()
 
     def __setDice(self):
         # Desenha o dado
         grid_dice = QGridLayout()
         self.__dice = Dice(int(self.__width/5))
-        grid_dice.addWidget(self.__dice, 1, 1)
+        grid_dice.addWidget(self.__dice.widget, 1, 1)
 
         for l in range(3):
             for c in range(3):
