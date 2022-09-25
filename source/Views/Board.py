@@ -20,6 +20,8 @@ class Board(QWidget):
         self.__start()
 
     def __setWindow(self):
+        self.setFixedHeight(self.__height)
+        self.setFixedWidth(self.__width)
         self.__topLeftGrid = QGridLayout()
         self.__topRightGrid = QGridLayout()
         self.__topMidGrid = QGridLayout()
@@ -34,37 +36,22 @@ class Board(QWidget):
     def __start(self):
         self.__setWindow()
         self.__setBoardWidgets()
+        # self.__grid.setContentsMargins(0, 0, 0, 0)
+        # self.__grid.setSpacing(5)
         self.setLayout(self.__grid)
 
     def __setBoardWidgets(self):
-        n_pins_grid = QGridLayout()
-        self.__grid.addLayout(n_pins_grid, 4, 0)
 
         self.__boardGrid = QGridLayout()
         self.__setHousesGrid()
         self.__setMiddleGrid()
+        self.__setTopMidGrid()
 
         for linha in range(3):
             for coluna in range(3):
                 self.__boardGrid = QGridLayout()
 
-                if linha == 0 and coluna == 1:
-                    # Cria os 15 quadrados entre as casas iniciais vermelhas e amarelas
-                    for l in range(5):
-                        for c in range(5):
-                            if c in [1, 2, 3]:
-                                if c == 2 and l != 0:
-                                    self.__boardGrid.addWidget(
-                                        Position(PositionsColor.YELLOW).widget, l, c)
-                                else:
-
-                                    self.__boardGrid.addWidget(
-                                        Position(PositionsColor.WHITE).widget, l, c)
-                            else:
-                                self.__boardGrid.addWidget(
-                                    Position(PositionsColor.NONE).widget, l, c)
-
-                elif linha == 1 and coluna == 0:
+                if linha == 1 and coluna == 0:
                     # caminho vermelho
                     for l in range(5):
                         for c in range(5):
@@ -119,7 +106,7 @@ class Board(QWidget):
                 else:
                     continue
 
-                if not ((linha == 0 or linha == 2) and (coluna == 0 or coluna == 2) or (linha == 1 and coluna == 1)):
+                if not ((linha == 0 or linha == 2) and (coluna == 0 or coluna == 2) or (linha == 1 and coluna == 1)) or (linha == 0 and coluna == 1):
                     self.__grid.addLayout(self.__boardGrid, linha, coluna)
 
     def __setHousesGrid(self) -> None:
@@ -143,6 +130,104 @@ class Board(QWidget):
 
         self.__topLeftGrid.addWidget(redHouse.widget, 0, 0)
         self.__grid.addLayout(self.__topLeftGrid, 0, 0)
+
+    def __setTopMidGrid(self) -> None:
+        # --------------- Primeira linha do bloco central top
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 0, 0)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[79] = position
+        self.__topMidGrid.addWidget(position.widget, 0, 1)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[0] = position
+        self.__topMidGrid.addWidget(position.widget, 0, 2)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[7] = position
+        self.__topMidGrid.addWidget(position.widget, 0, 3)
+
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 0, 4)
+
+        # --------------- Segunda linha do bloco central top
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 1, 0)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[78] = position
+        self.__topMidGrid.addWidget(position.widget, 1, 1)
+
+        position = Position(PositionsColor.YELLOW)
+        self.__positions[1] = position
+        self.__topMidGrid.addWidget(position.widget, 1, 2)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[8] = position
+        self.__topMidGrid.addWidget(position.widget, 1, 3)
+
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 1, 4)
+
+        # --------------- Terceira linha do bloco central top
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 2, 0)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[77] = position
+        self.__topMidGrid.addWidget(position.widget, 2, 1)
+
+        position = Position(PositionsColor.YELLOW)
+        self.__positions[2] = position
+        self.__topMidGrid.addWidget(position.widget, 2, 2)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[9] = position
+        self.__topMidGrid.addWidget(position.widget, 2, 3)
+
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 2, 4)
+
+        # --------------- Quarta linha do bloco central top
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 3, 0)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[76] = position
+        self.__topMidGrid.addWidget(position.widget, 3, 1)
+
+        position = Position(PositionsColor.YELLOW)
+        self.__positions[3] = position
+        self.__topMidGrid.addWidget(position.widget, 3, 2)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[10] = position
+        self.__topMidGrid.addWidget(position.widget, 3, 3)
+
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 3, 4)
+
+        # --------------- Quinta linha do bloco central top
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 4, 0)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[75] = position
+        self.__topMidGrid.addWidget(position.widget, 4, 1)
+
+        position = Position(PositionsColor.YELLOW)
+        self.__positions[4] = position
+        self.__topMidGrid.addWidget(position.widget, 4, 2)
+
+        position = Position(PositionsColor.WHITE)
+        self.__positions[11] = position
+        self.__topMidGrid.addWidget(position.widget, 4, 3)
+
+        position = Position(PositionsColor.NONE)
+        self.__topMidGrid.addWidget(position.widget, 4, 4)
+
+        self.__grid.addLayout(self.__topMidGrid, 0, 1)
 
     def __setMiddleGrid(self) -> None:
         # --------------- Primeira linha do bloco central

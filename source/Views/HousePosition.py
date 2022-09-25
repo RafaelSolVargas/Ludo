@@ -30,7 +30,7 @@ class HousePosition:
         return self.__widget
 
     def __start(self) -> None:
-        self.__widget.setFixedWidth(80)
-        self.__widget.setFixedHeight(80)
+        self.__widget.setFixedWidth(60)
+        self.__widget.setFixedHeight(60)
         self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.__widget.setStyleSheet(self.style[0])

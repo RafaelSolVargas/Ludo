@@ -1,29 +1,58 @@
-from PyQt5.QtWidgets import QWidget
 from Config.PositionsColor import PositionsColor
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtGui import QCursor
+from PyQt5 import QtCore
 
 
 class Position:
     def __init__(self, color: PositionsColor):
-        self.__widget = QWidget()
+        self.__widget = QPushButton()
+        self.__selected: bool = False
+        self.__widget.setFixedHeight(55)
+        self.__widget.setFixedWidth(55)
+
         self.__color = color
-        self.__style = self.__getStyle()
+        self.__configureClick()
 
-        self.__start()
+        self.__defaultStyle = self.__getStyle()
+        self.__selectedStyle = '''
+            *{  
+                background-color: 'grey';
+                border: 4px solid 'black';  
+            }
+        '''
+        self.__widget.setStyleSheet(self.__defaultStyle)
 
-    def __start(self):
-        self.__widget.setStyleSheet(self.__style)
+    def __configureClick(self) -> None:
+        if (self.__color in [PositionsColor.BLUE, PositionsColor.YELLOW,
+                             PositionsColor.RED, PositionsColor.GREEN, PositionsColor.WHITE]):
+            self.__widget.clicked.connect(lambda: self.__selectPosition())
+            self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+        else:
+            self.__widget.setDisabled(True)
+
+    def __selectPosition(self):
+        if self.__selected:
+            self.__selected = False
+            self.__widget.setStyleSheet(self.__defaultStyle)
+        else:
+            self.__selected = True
+            self.__widget.setStyleSheet(self.__selectedStyle)
 
     @property
-    def widget(self) -> QWidget:
+    def widget(self) -> QPushButton:
         return self.__widget
 
     def __getStyle(self):
         if self.__color == PositionsColor.WHITE:
             return '''
             *{  
-        
                 background-color: 'white';
                 border: 2px solid 'black';  
+            }
+            *:hover{
+                background-color: 'grey';
+                border: 4px solid 'black';  
             }
             '''
         elif self.__color == PositionsColor.BLUE:
@@ -31,6 +60,10 @@ class Position:
             *{  
                 background-color: 'blue';
                 border: 2px solid 'black';  
+            }
+            *:hover{
+                background-color: 'grey';
+                border: 4px solid 'black';  
             }
             '''
 
@@ -40,6 +73,10 @@ class Position:
                 background-color: 'yellow';
                 border: 2px solid 'black';  
             }
+            *:hover{
+                background-color: 'grey';
+                border: 4px solid 'black';  
+            }
             '''
 
         elif self.__color == PositionsColor.GREEN:
@@ -48,12 +85,20 @@ class Position:
                 background-color: 'green';
                 border: 2px solid 'black';  
             }
+            *:hover{
+                background-color: 'grey';
+                border: 4px solid 'black';  
+            }
             '''
         elif self.__color == PositionsColor.RED:
             return '''
             *{  
                 background-color: 'red';
                 border: 2px solid 'black';  
+            }
+            *:hover{
+                background-color: 'grey';
+                border: 4px solid 'black';  
             }
             '''
         elif self.__color == PositionsColor.NONE:
