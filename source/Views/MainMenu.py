@@ -87,7 +87,7 @@ class MainMenu(QMainWindow):
         self.__clear()
         self.__window.setStyleSheet("background: white;")
         self.__window.setWindowTitle('LUDO')
-
+        self.__window.showMaximized()
         self.__board = Board()
         self.__panel = Panel()
         self.__grid.addWidget(self.__board, 0, 0)

@@ -2,8 +2,10 @@ from typing import List
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.HouseColor import HouseColor
 from Config.PositionsColor import PositionsColor
+from Views.EndHouse import EndHouse
 from Views.Position import Position
 from Views.House import House
+from Views.EndHouse import EndHouse
 
 
 class Board(QWidget):
@@ -16,12 +18,11 @@ class Board(QWidget):
         self.__houses: List[House] = []
         # A primeira é a do meio em cima, anda no sentido horário entrando nos caminhos
         self.__positions: List[Position] = [None for _ in range(80)]
-
+        
         self.__start()
 
     def __setWindow(self):
-        self.setFixedHeight(self.__height)
-        self.setFixedWidth(self.__width)
+        #self.resize(self.__width, self.__height)
         self.__topLeftGrid = QGridLayout()
         self.__topRightGrid = QGridLayout()
         self.__topMidGrid = QGridLayout()
@@ -231,6 +232,7 @@ class Board(QWidget):
 
     def __setMiddleGrid(self) -> None:
         # --------------- Primeira linha do bloco central
+        # --------------- Vai ser position
         position = Position(PositionsColor.WHITE)
         self.__positions[73] = position
         self.__midMidGrid.addWidget(position.widget, 0, 0)
@@ -252,19 +254,22 @@ class Board(QWidget):
         self.__midMidGrid.addWidget(position.widget, 0, 4)
 
         # --------------- Segunda linha do bloco central
+        # --------------- Somente a primeira e ultima coluna vai ser position
         position = Position(PositionsColor.WHITE)
         self.__positions[72] = position
         self.__midMidGrid.addWidget(position.widget, 1, 0)
-
-        position = Position(PositionsColor.RED_YELLOW)
+        
+        # --------------- Casa final(inicio)
+        position = EndHouse(PositionsColor.RED_YELLOW)
         self.__midMidGrid.addWidget(position.widget, 1, 1)
 
-        position = Position(PositionsColor.YELLOW)
+        position = EndHouse(PositionsColor.YELLOW)
         self.__positions[6] = position
         self.__midMidGrid.addWidget(position.widget, 1, 2)
 
-        position = Position(PositionsColor.BLUE_YELLOW)
+        position = EndHouse(PositionsColor.BLUE_YELLOW)
         self.__midMidGrid.addWidget(position.widget, 1, 3)
+        # --------------- Casa final(fim)
 
         position = Position(PositionsColor.WHITE)
         self.__positions[14] = position
@@ -275,16 +280,18 @@ class Board(QWidget):
         self.__positions[65] = position
         self.__midMidGrid.addWidget(position.widget, 2, 0)
 
-        position = Position(PositionsColor.RED)
+        # --------------- Casa final(inicio)
+        position = EndHouse(PositionsColor.RED)
         self.__positions[66] = position
         self.__midMidGrid.addWidget(position.widget, 2, 1)
 
-        position = Position(PositionsColor.FULL)
+        position = EndHouse(PositionsColor.FULL)
         self.__midMidGrid.addWidget(position.widget, 2, 2)
 
-        position = Position(PositionsColor.BLUE)
+        position = EndHouse(PositionsColor.BLUE)
         self.__positions[26] = position
         self.__midMidGrid.addWidget(position.widget, 2, 3)
+        # --------------- Casa final(fim)
 
         position = Position(PositionsColor.BLUE)
         self.__positions[25] = position
@@ -295,21 +302,23 @@ class Board(QWidget):
         self.__positions[54] = position
         self.__midMidGrid.addWidget(position.widget, 3, 0)
 
-        position = Position(PositionsColor.RED_GREEN)
+        # --------------- Casa final(inicio)
+        position = EndHouse(PositionsColor.RED_GREEN)
         self.__midMidGrid.addWidget(position.widget, 3, 1)
 
-        position = Position(PositionsColor.GREEN)
+        position = EndHouse(PositionsColor.GREEN)
         self.__positions[46] = position
         self.__midMidGrid.addWidget(position.widget, 3, 2)
 
-        position = Position(PositionsColor.BLUE_GREEN)
+        position = EndHouse(PositionsColor.BLUE_GREEN)
         self.__midMidGrid.addWidget(position.widget, 3, 3)
+        # --------------- Casa final(fim)
 
         position = Position(PositionsColor.WHITE)
         self.__positions[32] = position
         self.__midMidGrid.addWidget(position.widget, 3, 4)
 
-        # --------------- Quinta linha do bloco central
+        # --------------- Quinta linha do bloco central(Full Position)
         position = Position(PositionsColor.WHITE)
         self.__positions[53] = position
         self.__midMidGrid.addWidget(position.widget, 4, 0)
@@ -325,7 +334,7 @@ class Board(QWidget):
         position = Position(PositionsColor.WHITE)
         self.__positions[34] = position
         self.__midMidGrid.addWidget(position.widget, 4, 3)
-
+        
         position = Position(PositionsColor.WHITE)
         self.__positions[33] = position
         self.__midMidGrid.addWidget(position.widget, 4, 4)

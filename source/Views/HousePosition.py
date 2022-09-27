@@ -8,16 +8,19 @@ class HousePosition:
         self.__widget = QPushButton()
         self.__color = color
 
-        self.style = '''
-        *{
-            border: 2px solid 'white';
-            border-radius: 40px;
-            color: 'white';
+        self.style = ['''
+        *{  
+            height: 80%;
+            margin: 30%;
+          
+            border-radius: 42%;
+            border: 2px solid 'black';  
+    
         }
         *:hover{
-            background: 'black';
+            background: 'grey';
         }
-        '''
+        ''']
 
         self.__start()
 
@@ -30,7 +33,7 @@ class HousePosition:
         return self.__widget
 
     def __start(self) -> None:
-        self.__widget.setFixedWidth(60)
-        self.__widget.setFixedHeight(60)
+        #self.__widget.setFixedWidth(60)
+        #self.__widget.setFixedHeight(60)
         self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.__widget.setStyleSheet(self.style[0])
