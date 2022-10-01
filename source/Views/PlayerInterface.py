@@ -7,10 +7,14 @@ from Views.Panel import Panel
 from Views.Image import Image
 from typing import List
 
+# Não é necessário efetivamente herdar a classe Interface, somente basta implementar os métodos lá definidos
+# simplesmente colocar DogPlayerInterface como classe base de PlayerInterface irá causar um conflito com a classe base
+# QMainWindow.
+
 
 class PlayerInterface(QMainWindow):
     def __init__(self):
-        super().__init__()
+        QMainWindow.__init__(self)
         self.__window = QWidget()
         self.__grid = QGridLayout()
 
@@ -25,6 +29,15 @@ class PlayerInterface(QMainWindow):
 
     def run(self):
         self.__configureFirstWindow()
+
+    def receive_move(self, a_move):
+        return super().receive_move(a_move)
+
+    def receive_start(self, start_status):
+        return super().receive_start(start_status)
+
+    def receive_withdrawal_notification(self):
+        return super().receive_withdrawal_notification()
 
     def __configureFirstWindow(self):
         # Clear widgets

@@ -1,12 +1,18 @@
-class DogPlayerInterface:
+from abc import ABC, abstractmethod
+
+
+class DogPlayerInterface(ABC):
     def __init__(self):
-        super().__init__()
+        pass
 
+    @abstractmethod
     def receive_start(self, start_status):
-        print("O método receive_start() precisa ser sobrescrito")
+        pass
 
+    @abstractmethod
     def receive_move(self, a_move):
-        print("O método receive_move() precisa ser sobrescrito")
+        pass
 
+    @abstractmethod
     def receive_withdrawal_notification(self):
-        print("O método receive_withdrawal_notification() precisa ser sobrescrito")
+        pass
