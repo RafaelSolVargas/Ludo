@@ -3,7 +3,7 @@ from Views.DiceHerdado import DiceHerdado
 from Views.RollButton import RollButton
 from Views.PushButton import PushButton
 from Config.ButtonsStyles import ButtonsStyles
-from Views.label import Label
+from Views.Label import Label
 from Views.Dice import Dice
 
 

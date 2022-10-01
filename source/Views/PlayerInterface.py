@@ -1,14 +1,14 @@
-from typing import List
 from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
-from Views.Image import Image
 from Views.PushButton import PushButton
 from Views.Board import Board
 from Views.Panel import Panel
+from Views.Image import Image
+from typing import List
 
 
-class MainMenu(QMainWindow):
+class PlayerInterface(QMainWindow):
     def __init__(self):
         super().__init__()
         self.__window = QWidget()
