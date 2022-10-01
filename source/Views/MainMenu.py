@@ -1,5 +1,5 @@
 from typing import List
-from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow
+from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Views.Image import Image
@@ -18,17 +18,53 @@ class MainMenu(QMainWindow):
         self.__playerButtons: List[PushButton] = []
         self.__pinsButtons: List[PushButton] = []
         self.__playButton: PushButton = None
+        self.__inputText: QLineEdit = None
 
         self.__board: Board = None
         self.__panel: Panel = None
 
-    def __setWindow(self) -> None:
+    def run(self):
+        self.__configureFirstWindow()
+
+    def __configureFirstWindow(self):
+        # Clear widgets
+        self.__clear()
+
+        # Configure the window
         self.__window.setWindowTitle('LUDO')
         self.__window.setStyleSheet("background: black;")
         self.__window.move(640, 108)
 
-    def __addWidgets(self) -> None:
-        # Cria as imagens que aparecem no Menu principal
+        # Create the widgets
+        self.__images.append(Image(ImagesPath.ludoLogo, 35))
+        self.__inputText = QLineEdit(self)
+        self.__inputText.setStyleSheet("background: white; width: 20%")
+        self.__inputText.setPlaceholderText('Your name: ')
+
+        self.__playerButtons.append(self.__inputText)
+        self.__playButton = PushButton(
+            'PLAY', ButtonsStyles.PlayButton, self.__configureSecondWindow)
+
+        # Add the widgets to the grid
+        self.__grid.addWidget(self.__images[0], 0, 0)
+        self.__grid.addWidget(self.__inputText, 1, 0)
+        self.__grid.addWidget(self.__playButton, 2, 0)
+
+        # Configure the grid and start the window
+        self.__window.setLayout(self.__grid)
+        self.__window.show()
+
+    def __configureSecondWindow(self):
+        print(self.__inputText.text())
+        # Clear widgets
+        self.__clear()
+
+        # Configure the window
+        self.__window.setWindowTitle('LUDO')
+        self.__window.setStyleSheet("background: black;")
+        self.__window.move(640, 108)
+
+        # Configure the widgets
         self.__images.append(Image(ImagesPath.numberPins, 50))
         self.__images.append(Image(ImagesPath.ludoLogo, 25))
         self.__images.append(Image(ImagesPath.numberPlayers, 50))
@@ -40,9 +76,9 @@ class MainMenu(QMainWindow):
             self.__playerButtons.append(PushButton(index, ButtonsStyles.MainMenuOptions))
 
         # Cria o botão de play e conecta com o método Play quando clicado
-        self.__playButton = PushButton('PLAY', ButtonsStyles.PlayButton, self.__playButtonClick)
+        self.__playButton = PushButton(
+            'PLAY', ButtonsStyles.PlayButton, self.__configureThirdWindow)
 
-    def __setGrids(self) -> None:
         # Adiciona as imagens na grid
         for image in self.__images:
             if image.imagePath == ImagesPath.numberPlayers:
@@ -70,32 +106,39 @@ class MainMenu(QMainWindow):
         # Adiciona o button de Play na grid
         self.__grid.addWidget(self.__playButton, 5, 0)
 
-    def __clear(self) -> None:
-        # Clear all the buttons
-        for button in self.__pinsButtons:
-            button.hide()
-
-        for button in self.__playerButtons:
-            button.hide()
-
-        for image in self.__images:
-            image.hide()
-
-        self.__playButton.hide()
-
-    def __playButtonClick(self):
+    def __configureThirdWindow(self):
+        # Clear widgets
         self.__clear()
+
+        # Set the window
         self.__window.setStyleSheet("background: white;")
         self.__window.setWindowTitle('LUDO')
         self.__window.showMaximized()
+
+        # Add the widgets
         self.__board = Board()
         self.__panel = Panel()
         self.__grid.addWidget(self.__board, 0, 0)
         self.__grid.addWidget(self.__panel, 0, 1)
 
-    def run(self):
-        self.__setWindow()
-        self.__addWidgets()
-        self.__setGrids()
-        self.__window.setLayout(self.__grid)
-        self.__window.show()
+    def __clear(self) -> None:
+        # Clear all the buttons
+        for button in self.__pinsButtons:
+            button.hide()
+        self.__pinsButtons.clear()
+
+        for button in self.__playerButtons:
+            button.hide()
+        self.__playerButtons.clear()
+
+        for image in self.__images:
+            image.hide()
+        self.__images.clear()
+
+        if self.__inputText is not None:
+            self.__inputText.hide()
+            self.__inputText = None
+
+        if self.__playButton is not None:
+            self.__playButton.hide()
+            self.__playButton = None
