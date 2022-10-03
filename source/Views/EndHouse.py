@@ -1,7 +1,5 @@
 from Config.PositionsColor import PositionsColor
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QCursor
-from PyQt5 import QtCore
 
 
 class EndHouse:
@@ -11,18 +9,15 @@ class EndHouse:
         self.__color = color
 
         self.__defaultStyle = self.__getStyle()
-       
+
         self.__widget.setStyleSheet(self.__defaultStyle)
-
-
 
     @property
     def widget(self) -> QWidget:
         return self.__widget
 
     def __getStyle(self):
-        
-    
+
         if self.__color == PositionsColor.BLUE:
             return '''
             *{  
@@ -60,7 +55,7 @@ class EndHouse:
                 height: 55%;  
             }
             '''
-    
+
         elif self.__color == PositionsColor.FULL:
             return '''
                 *{  

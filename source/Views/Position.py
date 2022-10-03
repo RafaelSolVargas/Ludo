@@ -8,8 +8,6 @@ class Position:
     def __init__(self, color: PositionsColor):
         self.__widget = QPushButton()
         self.__selected: bool = False
-        #self.__widget.setFixedHeight(55)
-        #self.__widget.setFixedWidth(55)
 
         self.__color = color
         self.__configureClick()
@@ -46,7 +44,7 @@ class Position:
         return self.__widget
 
     def __getStyle(self):
-        
+
         if self.__color == PositionsColor.WHITE:
             return '''
             *{  
@@ -118,4 +116,3 @@ class Position:
                 height: 55%;     
             }
             '''
-        

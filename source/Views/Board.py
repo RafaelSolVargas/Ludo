@@ -18,7 +18,7 @@ class Board(QWidget):
         self.__houses: List[House] = []
         # A primeira é a do meio em cima, anda no sentido horário entrando nos caminhos
         self.__positions: List[Position] = [None for _ in range(80)]
-        
+
         self.__start()
 
     def __setWindow(self):
@@ -42,7 +42,6 @@ class Board(QWidget):
         self.setLayout(self.__grid)
 
     def __setBoardWidgets(self):
-
         self.__boardGrid = QGridLayout()
         self.__setHousesGrid()
         self.__setMiddleGrid()
@@ -258,7 +257,7 @@ class Board(QWidget):
         position = Position(PositionsColor.WHITE)
         self.__positions[72] = position
         self.__midMidGrid.addWidget(position.widget, 1, 0)
-        
+
         # --------------- Casa final(inicio)
         position = EndHouse(PositionsColor.RED_YELLOW)
         self.__midMidGrid.addWidget(position.widget, 1, 1)
@@ -334,7 +333,7 @@ class Board(QWidget):
         position = Position(PositionsColor.WHITE)
         self.__positions[34] = position
         self.__midMidGrid.addWidget(position.widget, 4, 3)
-        
+
         position = Position(PositionsColor.WHITE)
         self.__positions[33] = position
         self.__midMidGrid.addWidget(position.widget, 4, 4)

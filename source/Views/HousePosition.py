@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QPushButton
-from PyQt5 import QtCore
 from PyQt5.QtGui import QCursor
+from PyQt5 import QtCore
 
 
 class HousePosition:
@@ -33,7 +33,5 @@ class HousePosition:
         return self.__widget
 
     def __start(self) -> None:
-        #self.__widget.setFixedWidth(60)
-        #self.__widget.setFixedHeight(60)
         self.__widget.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         self.__widget.setStyleSheet(self.style[0])

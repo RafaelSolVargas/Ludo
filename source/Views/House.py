@@ -7,8 +7,6 @@ from Views.Position import Position
 class House:
     def __init__(self, color: HouseColor):
         self.__widget = QWidget()
-        #self.__widget.setFixedHeight(300)
-        #self.__widget.setFixedHeight(300)
         self.__color = color
         self.__grid = QGridLayout()
         self.__style = self.__getStyle()
