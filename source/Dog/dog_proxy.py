@@ -26,7 +26,7 @@ class DogProxy:
             self.player_name = "player" + str(self.player_id)
         try:
             # config modified to Config due folders name
-            config_file = open("src/Config/game.id", "r")
+            config_file = open("Config/game.id", "r")
             self.game_id = config_file.read()
         except FileNotFoundError:
             self.status = 0

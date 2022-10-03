@@ -2,10 +2,12 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Views.PushButton import PushButton
+from Dog.dog_actor import DogActor
 from Views.Board import Board
 from Views.Panel import Panel
 from Views.Image import Image
-from typing import List
+from typing import List, Tuple
+from Dog.start_status import StartStatus
 
 # Não é necessário efetivamente herdar a classe Interface, somente basta implementar os métodos lá definidos
 # simplesmente colocar DogPlayerInterface como classe base de PlayerInterface irá causar um conflito com a classe base
@@ -23,6 +25,9 @@ class PlayerInterface(QMainWindow):
         self.__pinsButtons: List[PushButton] = []
         self.__playButton: PushButton = None
         self.__inputText: QLineEdit = None
+
+        self.__quantPlayers: int = None
+        self.__quantPins: int = None
 
         self.__board: Board = None
         self.__panel: Panel = None
@@ -67,8 +72,23 @@ class PlayerInterface(QMainWindow):
         self.__window.setLayout(self.__grid)
         self.__window.show()
 
-    def __configureSecondWindow(self):
-        print(self.__inputText.text())
+    def __configureSecondWindow(self) -> None:
+        userName = self.__inputText.text()
+
+        if userName == '':
+            print('Escolha um nome')
+            return None
+
+        self.__dogServerInterface = DogActor()
+        connResult = self.__dogServerInterface.initialize(userName, self)
+
+        # If could not connect then we do not pass to the next window
+        if not self.__successfullyConnected(connResult):
+            print(connResult)
+            return None
+
+        print('Conectado ao servidor')
+
         # Clear widgets
         self.__clear()
 
@@ -84,9 +104,11 @@ class PlayerInterface(QMainWindow):
 
         # Cria os botões de escolher players e pinos
         for index in range(1, 5):
-            self.__pinsButtons.append(PushButton(index, ButtonsStyles.MainMenuOptions))
+            button = PushButton(index, ButtonsStyles.Menu, self.__pinsButtonCallback, index)
+            self.__pinsButtons.append(button)
         for index in range(2, 5):
-            self.__playerButtons.append(PushButton(index, ButtonsStyles.MainMenuOptions))
+            button = PushButton(index, ButtonsStyles.Menu, self.__playersButtonCallback, index)
+            self.__playerButtons.append(button)
 
         # Cria o botão de play e conecta com o método Play quando clicado
         self.__playButton = PushButton(
@@ -120,6 +142,21 @@ class PlayerInterface(QMainWindow):
         self.__grid.addWidget(self.__playButton, 5, 0)
 
     def __configureThirdWindow(self):
+        if self.__quantPlayers == None or self.__quantPins == None:
+            print('Defina a quantidade de jogadores e de pinos')
+            return None
+
+        print(self.__quantPlayers)
+        status = self.__dogServerInterface.start_match(self.__quantPlayers)
+
+        failed, message = self.__failedToStartMatch(status)
+        if failed:
+            print(message)
+            return None
+
+        print(status.get_code())
+        print(status.get_message())
+
         # Clear widgets
         self.__clear()
 
@@ -155,3 +192,39 @@ class PlayerInterface(QMainWindow):
         if self.__playButton is not None:
             self.__playButton.hide()
             self.__playButton = None
+
+    def __playersButtonCallback(self, *args) -> None:
+        # O args é passado duas vezes e está ocorrendo a colocação de uma tupla dentro de outra
+        text: str = args[0][0]
+
+        for pButton in self.__playerButtons:
+            if pButton.text == text:
+                pButton.selected = True
+                pButton.style = ButtonsStyles.MenuSelected
+                self.__quantPlayers = int(text)
+            else:
+                pButton.selected = False
+                pButton.style = ButtonsStyles.Menu
+
+    def __pinsButtonCallback(self, *args) -> None:
+        # O args é passado duas vezes e está ocorrendo a colocação de uma tupla dentro de outra
+        text: str = args[0][0]
+
+        for pButton in self.__pinsButtons:
+            if pButton.text == text:
+                pButton.selected = True
+                pButton.style = ButtonsStyles.MenuSelected
+                self.__quantPins = int(text)
+            else:
+                pButton.selected = False
+                pButton.style = ButtonsStyles.Menu
+
+    def __successfullyConnected(self, connResult: str) -> bool:
+        if 'Conectado' in connResult:
+            return True
+        return False
+
+    def __failedToStartMatch(self, status: StartStatus) -> Tuple[bool, str]:
+        if int(status.get_code()) == 1:
+            return (True, status.get_message())
+        return (False, '')

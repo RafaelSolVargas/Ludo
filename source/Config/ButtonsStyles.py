@@ -16,7 +16,7 @@ class ButtonsStyles:
             background: '#542100';
         }
         '''
-    MainMenuOptions = '''
+    Menu = '''
         *{
             border: 2px solid 'white';
             font-size: 18px;
@@ -34,6 +34,24 @@ class ButtonsStyles:
         }
         *:hover{
             background: '#494949';
+        }
+        '''
+
+    MenuSelected = '''
+        *{
+            border: 2px solid 'red';
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 27px;
+            width: 50px;
+            
+            color: 'red';
+            padding: 15px 0;
+            
+
+            margin-top:50px; 
+            margin-left: 40px;
+            margin-right: 40px;
         }
         '''
     RollButton = '''
