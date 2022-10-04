@@ -23,6 +23,22 @@ class Position:
         '''
         self.__widget.setStyleSheet(self.__defaultStyle)
 
+    @property
+    def selected(self) -> bool:
+        return self.__selected
+
+    @selected.setter
+    def selected(self, selected) -> bool:
+        self.__selected = selected
+        if self.__selected:
+            self.__widget.setStyleSheet(self.__defaultStyle)
+        else:
+            self.__widget.setStyleSheet(self.__selectedStyle)
+
+    @property
+    def widget(self) -> QPushButton:
+        return self.__widget
+
     def __configureClick(self) -> None:
         if (self.__color in [PositionsColor.BLUE, PositionsColor.YELLOW,
                              PositionsColor.RED, PositionsColor.GREEN, PositionsColor.WHITE]):
@@ -38,10 +54,6 @@ class Position:
         else:
             self.__selected = True
             self.__widget.setStyleSheet(self.__selectedStyle)
-
-    @property
-    def widget(self) -> QPushButton:
-        return self.__widget
 
     def __getStyle(self):
 

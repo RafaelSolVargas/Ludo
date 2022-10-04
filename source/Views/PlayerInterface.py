@@ -3,7 +3,7 @@ from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Views.PushButton import PushButton
 from Dog.dog_actor import DogActor
-from Views.Board import Board
+from Game.Board import Board
 from Views.Panel import Panel
 from Views.Image import Image
 from typing import List, Tuple
@@ -147,7 +147,7 @@ class PlayerInterface(QMainWindow):
             return None
 
         print(self.__quantPlayers)
-        status = self.__dogServerInterface.start_match(self.__quantPlayers)
+        status = self.__dogServerInterface.start_match(1)
 
         failed, message = self.__failedToStartMatch(status)
         if failed:
