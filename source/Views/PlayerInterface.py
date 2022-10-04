@@ -1,13 +1,14 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
+from Game.Player import Player
 from Views.PushButton import PushButton
-from Dog.dog_actor import DogActor
 from Game.Board import Board
 from Views.Panel import Panel
 from Views.Image import Image
 from typing import List, Tuple
 from Dog.start_status import StartStatus
+from Abstractions.AbstractGame import AbstractGame
 
 # Não é necessário efetivamente herdar a classe Interface, somente basta implementar os métodos lá definidos
 # simplesmente colocar DogPlayerInterface como classe base de PlayerInterface irá causar um conflito com a classe base
@@ -15,8 +16,10 @@ from Dog.start_status import StartStatus
 
 
 class PlayerInterface(QMainWindow):
-    def __init__(self):
+    def __init__(self, game: AbstractGame):
         QMainWindow.__init__(self)
+        self.__game = game
+
         self.__window = QWidget()
         self.__grid = QGridLayout()
 
@@ -31,6 +34,10 @@ class PlayerInterface(QMainWindow):
 
         self.__board: Board = None
         self.__panel: Panel = None
+
+    @property
+    def board(self) -> Board:
+        return self.__board
 
     def run(self):
         self.__configureFirstWindow()
@@ -79,8 +86,8 @@ class PlayerInterface(QMainWindow):
             print('Escolha um nome')
             return None
 
-        self.__dogServerInterface = DogActor()
-        connResult = self.__dogServerInterface.initialize(userName, self)
+        self.__player = Player()
+        connResult = self.__player.initialize(userName, self)
 
         # If could not connect then we do not pass to the next window
         if not self.__successfullyConnected(connResult):
@@ -147,15 +154,12 @@ class PlayerInterface(QMainWindow):
             return None
 
         print(self.__quantPlayers)
-        status = self.__dogServerInterface.start_match(1)
+        status = self.__player.start_match(1)
 
         failed, message = self.__failedToStartMatch(status)
         if failed:
             print(message)
             return None
-
-        print(status.get_code())
-        print(status.get_message())
 
         # Clear widgets
         self.__clear()
@@ -170,6 +174,13 @@ class PlayerInterface(QMainWindow):
         self.__panel = Panel()
         self.__grid.addWidget(self.__board, 0, 0)
         self.__grid.addWidget(self.__panel, 0, 1)
+
+        # Send a message to Game to start a match
+        players = status.get_players()
+        print(players)
+        print(type(players))
+        print(len(players))
+        # self.__game.startMatch(players, self.__quantPins, self.__board)
 
     def __clear(self) -> None:
         # Clear all the buttons
@@ -228,3 +239,8 @@ class PlayerInterface(QMainWindow):
         if int(status.get_code()) == 1:
             return (True, status.get_message())
         return (False, '')
+
+    def __createPlayers(self, status: StartStatus) -> List[Player]:
+        players = []
+        for player in status.get_players():
+            players.append(Player())

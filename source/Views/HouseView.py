@@ -1,11 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
-from Config.HouseColor import HouseColor
+from Config.PlayerColor import PlayerColor
 from Views.HousePosition import HousePosition
-from Views.Position import Position
 
 
-class House:
-    def __init__(self, color: HouseColor):
+class HouseView:
+    def __init__(self, color: PlayerColor):
         self.__widget = QWidget()
         self.__color = color
         self.__grid = QGridLayout()
@@ -27,7 +26,7 @@ class House:
         self.__widget.setLayout(self.__grid)
 
     def __getStyle(self):
-        if self.__color == HouseColor.BLUE:
+        if self.__color == PlayerColor.BLUE:
             return '''
             *{  
                 border-radius: 159%;
@@ -35,7 +34,7 @@ class House:
                 border: 2px solid 'black';  
             }
             '''
-        elif self.__color == HouseColor.YELLOW:
+        elif self.__color == PlayerColor.YELLOW:
             return '''
             *{  
                 border-radius: 159%;
@@ -43,7 +42,7 @@ class House:
                 border: 2px solid 'black';  
             }
             '''
-        elif self.__color == HouseColor.GREEN:
+        elif self.__color == PlayerColor.GREEN:
             return '''
             *{  
                 border-radius: 159%;

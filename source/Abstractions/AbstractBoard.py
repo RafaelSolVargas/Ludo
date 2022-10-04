@@ -1,0 +1,2 @@
+class AbstractBoard:
+    pass
