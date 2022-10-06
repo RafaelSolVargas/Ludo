@@ -3,7 +3,7 @@ from Config.PlayerColor import PlayerColor
 from Views.HousePosition import HousePosition
 
 
-class HouseView:
+class House:
     def __init__(self, color: PlayerColor):
         self.__widget = QWidget()
         self.__color = color

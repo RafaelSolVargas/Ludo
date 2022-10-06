@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.PositionsColor import PositionsColor
 from Config.PlayerColor import PlayerColor
-from Views.HouseView import HouseView
+from Views.HouseView import House
 from Views.EndHouse import EndHouse
 from Views.Position import Position
 from Views.EndHouse import EndHouse
@@ -13,7 +13,7 @@ class Board(QWidget):
         super().__init__()
         self.__grid = QGridLayout()
         # YELLOW - BLUE - GREEN - RED
-        self.__houses: List[HouseView] = []
+        self.__houses: List[House] = []
         # A primeira é a do meio em cima, anda no sentido horário entrando nos caminhos
         self.__positions: List[Position] = [None for _ in range(80)]
 
@@ -97,10 +97,10 @@ class Board(QWidget):
         self.__setBottomMidGrid()
 
     def __setHousesGrid(self) -> None:
-        yellowHouse = HouseView(PlayerColor.YELLOW)
-        blueHouse = HouseView(PlayerColor.BLUE)
-        greenHouse = HouseView(PlayerColor.GREEN)
-        redHouse = HouseView(PlayerColor.RED)
+        yellowHouse = House(PlayerColor.YELLOW)
+        blueHouse = House(PlayerColor.BLUE)
+        greenHouse = House(PlayerColor.GREEN)
+        redHouse = House(PlayerColor.RED)
         self.__houses.append(yellowHouse.widget)
         self.__houses.append(blueHouse.widget)
         self.__houses.append(greenHouse.widget)
