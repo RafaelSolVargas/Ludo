@@ -25,12 +25,12 @@ class PlayerInterface(QMainWindow):
 
         self.__images: List[Image] = []
         self.__playerButtons: List[PushButton] = []
-        self.__pinsButtons: List[PushButton] = []
+        self.__pawnsButtons: List[PushButton] = []
         self.__playButton: PushButton = None
         self.__inputText: QLineEdit = None
 
         self.__quantPlayers: int = None
-        self.__quantPins: int = None
+        self.__quantPawns: int = None
 
         self.__board: Board = None
         self.__panel: Panel = None
@@ -105,14 +105,14 @@ class PlayerInterface(QMainWindow):
         self.__window.move(640, 108)
 
         # Configure the widgets
-        self.__images.append(Image(ImagesPath.numberPins, 50))
+        self.__images.append(Image(ImagesPath.numberPawns, 50))
         self.__images.append(Image(ImagesPath.ludoLogo, 25))
         self.__images.append(Image(ImagesPath.numberPlayers, 50))
 
         # Cria os botões de escolher players e pinos
         for index in range(1, 5):
-            button = PushButton(index, ButtonsStyles.Menu, self.__pinsButtonCallback, index)
-            self.__pinsButtons.append(button)
+            button = PushButton(index, ButtonsStyles.Menu, self.__pawnsButtonCallback, index)
+            self.__pawnsButtons.append(button)
         for index in range(2, 5):
             button = PushButton(index, ButtonsStyles.Menu, self.__playersButtonCallback, index)
             self.__playerButtons.append(button)
@@ -139,17 +139,17 @@ class PlayerInterface(QMainWindow):
         self.__grid.addLayout(playersGrid, 2, 0)
 
         # Adiciona os botões de pins na grid
-        pinsGrid = QGridLayout()
-        for button in self.__pinsButtons:
+        pawnsGrid = QGridLayout()
+        for button in self.__pawnsButtons:
             column = int(button.text) - 1
-            pinsGrid.addWidget(button, 0, column)
-        self.__grid.addLayout(pinsGrid, 4, 0)
+            pawnsGrid.addWidget(button, 0, column)
+        self.__grid.addLayout(pawnsGrid, 4, 0)
 
         # Adiciona o button de Play na grid
         self.__grid.addWidget(self.__playButton, 5, 0)
 
     def __configureThirdWindow(self):
-        if self.__quantPlayers == None or self.__quantPins == None:
+        if self.__quantPlayers == None or self.__quantPawns == None:
             print('Defina a quantidade de jogadores e de pinos')
             return None
 
@@ -184,9 +184,9 @@ class PlayerInterface(QMainWindow):
 
     def __clear(self) -> None:
         # Clear all the buttons
-        for button in self.__pinsButtons:
+        for button in self.__pawnsButtons:
             button.hide()
-        self.__pinsButtons.clear()
+        self.__pawnsButtons.clear()
 
         for button in self.__playerButtons:
             button.hide()
@@ -217,15 +217,15 @@ class PlayerInterface(QMainWindow):
                 pButton.selected = False
                 pButton.style = ButtonsStyles.Menu
 
-    def __pinsButtonCallback(self, *args) -> None:
+    def __pawnsButtonCallback(self, *args) -> None:
         # O args é passado duas vezes e está ocorrendo a colocação de uma tupla dentro de outra
         text: str = args[0][0]
 
-        for pButton in self.__pinsButtons:
+        for pButton in self.__pawnsButtons:
             if pButton.text == text:
                 pButton.selected = True
                 pButton.style = ButtonsStyles.MenuSelected
-                self.__quantPins = int(text)
+                self.__quantPawns = int(text)
             else:
                 pButton.selected = False
                 pButton.style = ButtonsStyles.Menu
@@ -244,3 +244,10 @@ class PlayerInterface(QMainWindow):
         players = []
         for player in status.get_players():
             players.append(Player())
+
+
+"""
+
+
+
+"""
