@@ -15,7 +15,9 @@ class Panel(QWidget):
         self.__dice: Dice = None
         self.__rollButton: RollButton = None
 
-        self.__start()
+        self.__setWindow()
+        self.__setControl()
+        self.setLayout(self.grid)
 
     def __setWindow(self):
         # self.setFixedWidth(self.__width)
@@ -53,8 +55,3 @@ class Panel(QWidget):
 
         self.__rollButton = PushButton('ROLL DICE', ButtonsStyles.RollButton, lambda: self.roll())
         self.grid.addWidget(self.__rollButton, 2, 0)
-
-    def __start(self):
-        self.__setWindow()
-        self.__setControl()
-        self.setLayout(self.grid)
