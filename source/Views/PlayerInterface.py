@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Game.Player import Player
+from Dog.dog_actor import DogActor
 from Views.PushButton import PushButton
 from Game.Board import Board
 from Views.Panel import Panel
@@ -46,7 +47,7 @@ class PlayerInterface(QMainWindow):
         return super().receive_move(a_move)
 
     def receive_start(self, start_status):
-        return super().receive_start(start_status)
+        self.__buildBoard()
 
     def receive_withdrawal_notification(self):
         return super().receive_withdrawal_notification()
@@ -86,8 +87,8 @@ class PlayerInterface(QMainWindow):
             print('Escolha um nome')
             return None
 
-        self.__player = Player()
-        connResult = self.__player.initialize(userName, self)
+        self.__localActor = DogActor()
+        connResult = self.__localActor.initialize(userName, self)
 
         # If could not connect then we do not pass to the next window
         if not self.__successfullyConnected(connResult):
@@ -154,33 +155,14 @@ class PlayerInterface(QMainWindow):
             return None
 
         print(self.__quantPlayers)
-        status = self.__player.start_match(1)
+        status = self.__localActor.start_match(1)
 
         failed, message = self.__failedToStartMatch(status)
         if failed:
             print(message)
             return None
 
-        # Clear widgets
-        self.__clear()
-
-        # Set the window
-        self.__window.setStyleSheet("background: white;")
-        self.__window.setWindowTitle('LUDO')
-        self.__window.showMaximized()
-
-        # Add the widgets
-        self.__board = Board()
-        self.__panel = Panel()
-        self.__grid.addWidget(self.__board, 0, 0)
-        self.__grid.addWidget(self.__panel, 0, 1)
-
-        # Send a message to Game to start a match
-        players = status.get_players()
-        print(players)
-        print(type(players))
-        print(len(players))
-        # self.__game.startMatch(players, self.__quantPins, self.__board)
+        self.__buildBoard()
 
     def __clear(self) -> None:
         # Clear all the buttons
@@ -245,9 +227,17 @@ class PlayerInterface(QMainWindow):
         for player in status.get_players():
             players.append(Player())
 
+    def __buildBoard(self) -> None:
+        # Clear widgets
+        self.__clear()
 
-"""
+        # Set the window
+        self.__window.setStyleSheet("background: white;")
+        self.__window.setWindowTitle('LUDO')
+        self.__window.showMaximized()
 
-
-
-"""
+        # Add the widgets
+        self.__board = Board()
+        self.__panel = Panel()
+        self.__grid.addWidget(self.__board, 0, 0)
+        self.__grid.addWidget(self.__panel, 0, 1)

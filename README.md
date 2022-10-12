@@ -8,8 +8,8 @@ To execute the game go to the Source folder and type ```python main.py```
 https://docs.google.com/document/d/1y8Lz6k4stppiwtyrOZOMOCp1j_aUnpUX8Y8d-xryuEQ/edit
 
 ### Is modifying the project?
-- Rafael Vargas -> True
-- Thiago Bewiahn -> False
+- Rafael Vargas -> False
+- Thiago Bewiahn -> True
 - Kalleo Ouriques -> False
  
 
