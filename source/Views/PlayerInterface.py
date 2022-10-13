@@ -155,7 +155,7 @@ class PlayerInterface(QMainWindow):
             return None
 
         print(self.__quantPlayers)
-        status = self.__localActor.start_match(1)
+        status = self.__localActor.start_match(self.__quantPlayers)
 
         failed, message = self.__failedToStartMatch(status)
         if failed:
