@@ -1,26 +1,32 @@
-from Dog.dog_actor import DogActor
-from Dog.dog_interface import DogPlayerInterface
 from Config.PlayerColor import PlayerColor
-from Game.House import House
+from Views.House import House
+from Abstractions.AbstractPlayer import AbstractPlayer
 
 
-class Player(DogActor):
-    def __init__(self):
-        super().__init__()
-        self.__started: bool = False
-        self.__name: str = None
+class Player(AbstractPlayer):
+    def __init__(self, name: int, id: str):
+        self.__name: str = name
+        self.__id = id
         self.__house: House = None
         self.__color: PlayerColor = None
 
-    def setHouse(self, house: House):
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def house(self) -> House:
+        return self.__house
+
+    @house.setter
+    def house(self, house: House):
         self.__house = house
         self.__color = self.__house.color
 
     @property
     def color(self) -> PlayerColor:
         return self.__color
-
-    def initialize(self, playerName: str, playerActor: DogPlayerInterface):
-        self.__started = True
-        self.__name = playerName
-        return super().initialize(playerName, playerActor)

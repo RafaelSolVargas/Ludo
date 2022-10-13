@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.PositionsColor import PositionsColor
 from Config.PlayerColor import PlayerColor
-from Views.HouseView import House
+from Views.House import House
 from Views.EndHouse import EndHouse
 from Views.Position import Position
 from Views.EndHouse import EndHouse
@@ -23,14 +23,19 @@ class Board(QWidget):
         self.__yellowPath = self.__getYellowPath()
         self.__greenPath = self.__getGreenPath()
 
+    @property
+    def houses(self) -> List[House]:
+        """0 -> YELLOW | 1 -> BLUE | 2 -> GREEN | 3 -> RED"""
+        return self.__houses
+
     def getPlayerPath(self, playerColor: PlayerColor):
         if playerColor == PlayerColor.RED:
             return self.__redPath
-        if playerColor == playerColor.BLUE:
+        if playerColor == PlayerColor.BLUE:
             return self.__bluePath
-        if playerColor == playerColor.YELLOW:
+        if playerColor == PlayerColor.YELLOW:
             return self.__yellowPath
-        if playerColor == playerColor.GREEN:
+        if playerColor == PlayerColor.GREEN:
             return self.__greenPath
 
         raise TypeError(f'{playerColor} passed as instance of PlayerColor')
@@ -101,10 +106,10 @@ class Board(QWidget):
         blueHouse = House(PlayerColor.BLUE)
         greenHouse = House(PlayerColor.GREEN)
         redHouse = House(PlayerColor.RED)
-        self.__houses.append(yellowHouse.widget)
-        self.__houses.append(blueHouse.widget)
-        self.__houses.append(greenHouse.widget)
-        self.__houses.append(redHouse.widget)
+        self.__houses.append(yellowHouse)
+        self.__houses.append(blueHouse)
+        self.__houses.append(greenHouse)
+        self.__houses.append(redHouse)
 
         self.__topRightGrid.addWidget(yellowHouse.widget, 0, 2)
         self.__grid.addLayout(self.__topRightGrid, 0, 2)

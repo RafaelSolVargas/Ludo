@@ -20,7 +20,7 @@ from Abstractions.AbstractGame import AbstractGame
 class PlayerInterface(QMainWindow):
     def __init__(self, game: AbstractGame):
         QMainWindow.__init__(self)
-        self.__game = game
+        self.__game: AbstractGame = game
 
         self.__window = QWidget()
         self.__grid = QGridLayout()
@@ -36,6 +36,8 @@ class PlayerInterface(QMainWindow):
 
         self.__board: Board = None
         self.__panel: Panel = None
+        # ID para identificar qual o player local
+        self.__localID: str = None
 
     @property
     def board(self) -> Board:
@@ -47,12 +49,16 @@ class PlayerInterface(QMainWindow):
     def receive_move(self, a_move):
         return super().receive_move(a_move)
 
-    def receive_start(self, start_status: StartStatus):
-        print(start_status.get_code())
-        print(start_status.get_local_id())
-        print(start_status.get_message())
-        print(start_status.get_players())
+    def receive_start(self, status: StartStatus):
+        # Chama o método para desenhar a tela, caso seja chamado diretamente irá ocorrer um erro de threads
         QMetaObject.invokeMethod(self, '_buildBoard')
+
+        # Cria as instâncias de players
+        players = self.__buildPlayers(status.get_players())
+        self.__localID = status.get_local_id()
+
+        # Manda para a instância de game iniciar a partida
+        self.__game.startMatch(players, self.__quantPawns, self.__board, self.__localID)
 
     def receive_withdrawal_notification(self):
         return super().receive_withdrawal_notification()
@@ -167,7 +173,15 @@ class PlayerInterface(QMainWindow):
             print(message)
             return None
 
+        # Desenha a tela
         self._buildBoard()
+
+        # Cria as instâncias de players
+        players = self.__buildPlayers(status.get_players())
+        self.__localID = status.get_local_id()
+
+        # Manda para a instância de game iniciar a partida
+        self.__game.startMatch(players, self.__quantPawns, self.__board, self.__localID)
 
     def __clear(self) -> None:
         # Clear all the buttons
@@ -227,32 +241,29 @@ class PlayerInterface(QMainWindow):
             return (True, status.get_message())
         return (False, '')
 
-    def __createPlayers(self, status: StartStatus) -> List[Player]:
-        players = []
-        for player in status.get_players():
-            players.append(Player())
-
     @pyqtSlot()
     def _buildBoard(self) -> None:
         # Clear widgets
         self.__clear()
 
         # Set the window
-        print('1')
         self.__window.setStyleSheet("background: white;")
-        print('2')
         self.__window.setWindowTitle('LUDO')
-        print('3')
         self.__window.showMaximized()
-        print('4')
 
         # Add the widgets
         self.__board = Board()
-        print('4.5')
         self.__panel = Panel()
 
-        print('5')
         self.__grid.addWidget(self.__board, 0, 0)
-        print('6')
         self.__grid.addWidget(self.__panel, 0, 1)
-        print('7')
+
+    def __buildPlayers(self, playersInfo: List) -> List[Player]:
+        players = []
+        for playerInfo in playersInfo:
+            name = playerInfo[0]
+            playerID = playerInfo[1]
+            player = Player(name, playerID)
+            players.append(player)
+
+        return players

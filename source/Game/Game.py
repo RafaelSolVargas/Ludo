@@ -1,8 +1,5 @@
-from Config.PlayerColor import PlayerColor
-from Game.House import House
 from Views.PlayerInterface import PlayerInterface
 from PyQt5.QtWidgets import QApplication
-from Dog.dog_actor import DogActor
 from Game.Player import Player
 from Game.Board import Board
 from typing import List
@@ -14,6 +11,7 @@ class Game:
         self.__app = QApplication(sys.argv)
         self.__interface: PlayerInterface = None
 
+        self.__localPlayer: Player = None
         self.__players: List[Player] = None
         self.__board: Board = None
 
@@ -26,10 +24,20 @@ class Game:
         self.__interface.run()
         self.__app.exec()
 
-    def startMatch(self, players: List[Player], pawnsQuant: int, board: Board):
+    def startMatch(self, players: List[Player], pawnsQuant: int, board: Board, localID: int):
+        print(board)
         self.__board = board
-        housesColors = [PlayerColor.GREEN, PlayerColor.BLUE, PlayerColor.YELLOW, PlayerColor.RED]
+
         for index, player in enumerate(players):
-            path = self.__board.getPlayerPath(housesColors[index])
-            house = House(housesColors[index], pawnsQuant, path)
-            player.setHouse(house)
+            # Configura o player local pelo ID
+            if player.id == localID:
+                self.__localPlayer = player
+
+            # Seleciona uma casa para o jogador acessando a lista de casas pelo index
+            house = board.houses[index]
+            # Pega o path da casa
+            path = self.__board.getPlayerPath(house.color)
+            # Configura a casa
+            house.configureMatch(path, pawnsQuant, player)
+            # Já configura a cor do player pela casa que ele recebe
+            player.house = house
