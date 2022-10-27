@@ -24,7 +24,7 @@ class Game:
         self.__interface.run()
         self.__app.exec()
 
-    def startMatch(self, players: List[Player], pawnsQuant: int, board: Board, localID: int):
+    def startMatch(self, players: List[Player], board: Board, localID: int):
         print(board)
         self.__board = board
 
@@ -38,6 +38,6 @@ class Game:
             # Pega o path da casa
             path = self.__board.getPlayerPath(house.color)
             # Configura a casa
-            house.configureMatch(path, pawnsQuant, player)
+            house.configureMatch(path, player)
             # Já configura a cor do player pela casa que ele recebe
             player.house = house

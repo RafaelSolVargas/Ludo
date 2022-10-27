@@ -8,7 +8,7 @@ class AbstractHouse:
         pass
 
     @abstractmethod
-    def configureMatch(self, path, pawnsQuant: int, player) -> None:
+    def configureMatch(self, path, player) -> None:
         pass
 
     @property

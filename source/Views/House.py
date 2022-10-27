@@ -19,9 +19,9 @@ class House(AbstractHouse):
         self.__style = self.__getStyle()
         self.__start()
 
-    def configureMatch(self, path: List[Position], pawnsQuant: int, player: AbstractPlayer) -> None:
+    def configureMatch(self, path: List[Position], player: AbstractPlayer) -> None:
         # Após já ter o path definido cria os peões
-        for x in range(pawnsQuant):
+        for x in range(4):
             self.__pawns.append(Pawn(self.__color, path, self))
         self.__player = player
 

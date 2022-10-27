@@ -58,7 +58,7 @@ class PlayerInterface(QMainWindow):
         self.__localID = status.get_local_id()
 
         # Manda para a instância de game iniciar a partida
-        self.__game.startMatch(players, self.__quantPawns, self.__board, self.__localID)
+        self.__game.startMatch(players, self.__board, self.__localID)
 
     def receive_withdrawal_notification(self):
         return super().receive_withdrawal_notification()
@@ -117,14 +117,10 @@ class PlayerInterface(QMainWindow):
         self.__window.move(640, 108)
 
         # Configure the widgets
-        self.__images.append(Image(ImagesPath.numberPawns, 50))
         self.__images.append(Image(ImagesPath.ludoLogo, 25))
         self.__images.append(Image(ImagesPath.numberPlayers, 50))
 
-        # Cria os botões de escolher players e pinos
-        for index in range(1, 5):
-            button = PushButton(index, ButtonsStyles.Menu, self.__pawnsButtonCallback, index)
-            self.__pawnsButtons.append(button)
+        # Cria os botões de escolher players
         for index in range(2, 5):
             button = PushButton(index, ButtonsStyles.Menu, self.__playersButtonCallback, index)
             self.__playerButtons.append(button)
@@ -150,15 +146,8 @@ class PlayerInterface(QMainWindow):
             playersGrid.addWidget(button, 0, column)
         self.__grid.addLayout(playersGrid, 2, 0)
 
-        # Adiciona os botões de pins na grid
-        pawnsGrid = QGridLayout()
-        for button in self.__pawnsButtons:
-            column = int(button.text) - 1
-            pawnsGrid.addWidget(button, 0, column)
-        self.__grid.addLayout(pawnsGrid, 4, 0)
-
         # Adiciona o button de Play na grid
-        self.__grid.addWidget(self.__playButton, 5, 0)
+        self.__grid.addWidget(self.__playButton, 4, 0)
 
     def __configureThirdWindow(self):
         if self.__quantPlayers == None or self.__quantPawns == None:
