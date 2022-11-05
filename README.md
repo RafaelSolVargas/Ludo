@@ -9,7 +9,7 @@ https://docs.google.com/document/d/1y8Lz6k4stppiwtyrOZOMOCp1j_aUnpUX8Y8d-xryuEQ/
 
 ### Is modifying the project?
 - Rafael Vargas -> False
-- Thiago Bewiahn -> true 
+- Thiago Bewiahn -> False 
 - Kalleo Ouriques -> False
  
 
