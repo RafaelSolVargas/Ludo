@@ -1,6 +1,8 @@
+from typing import List
 from Config.PositionsColor import PositionsColor
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtGui import QCursor
+from Abstractions.AbstractPawn import AbstractPawn
 from PyQt5 import QtCore
 
 
@@ -9,6 +11,7 @@ class Position:
         self.__widget = QPushButton()
         self.__selected: bool = False
 
+        self.__pawns: List[AbstractPawn] = []
         self.__color = color
         self.__configureClick()
 
@@ -22,6 +25,30 @@ class Position:
             }
         '''
         self.__widget.setStyleSheet(self.__defaultStyle)
+
+    def removePawn(self) -> AbstractPawn:
+        if len(self.__pawns == 0):
+            print('Erro tentando remover peão de casa vazia')
+
+        return self.__pawns.pop(0)
+
+    def receivePawn(self, pawn: AbstractPawn) -> None:
+        if len(self.__pawns == 2):
+            print('Erro tentando adicionar um terceiro peão a uma casa')
+
+        self.__pawns.append(pawn)
+
+    @property
+    def pawns(self) -> List[AbstractPawn]:
+        return self.__pawns
+
+    @property
+    def isBlocked(self) -> bool:
+        return len(self.__pawns) == 2
+
+    @property
+    def isFree(self) -> bool:
+        return len(self.__pawns) == 0
 
     @property
     def selected(self) -> bool:
