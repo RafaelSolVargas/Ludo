@@ -19,11 +19,14 @@ class House(AbstractHouse):
         self.__style = self.__getStyle()
         self.__start()
 
-    def configureMatch(self, path: List[Position], player: AbstractPlayer) -> None:
+    def configureMatch(self, path: List[Position], player: AbstractPlayer) -> List[Pawn]:
         # Após já ter o path definido cria os peões
+        pawnID = self.__getFirstPawnID()
         for x in range(4):
-            self.__pawns.append(Pawn(self.__color, path, self))
+            self.__pawns.append(Pawn(player, path, self, pawnID))
+            pawnID += 1
         self.__player = player
+        return self.__pawns
 
     @property
     def widget(self) -> QWidget:
@@ -48,6 +51,15 @@ class House(AbstractHouse):
 
         raise IndexError('Tentativa de remover peão de casa já vazia')
 
+    def __getFirstPawnID(self) -> int:
+        if self.__color == PlayerColor.BLUE:
+            return 0
+        if self.__color == PlayerColor.RED:
+            return 4
+        if self.__color == PlayerColor.GREEN:
+            return 8
+        return 12
+
     def pawnsQuant(self) -> int:
         return len(self.__pawns)
 
@@ -56,6 +68,7 @@ class House(AbstractHouse):
             print(f'House de cor {self.__color} recebendo peão de cor {pawn.color}')
             return
 
+        pawn.status = PawnStatus.STORED
         self.__pawns.append(pawn)
 
     def __setGrid(self) -> None:

@@ -26,7 +26,7 @@ class AbstractPawn(ABC):
         pass
 
     @abstractmethod
-    def kill(self) -> None:
+    def returnToHouse(self) -> None:
         pass
 
     @abstractmethod

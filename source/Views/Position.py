@@ -17,11 +17,11 @@ class Position:
 
         self.__defaultStyle = self.__getStyle()
         self.__selectedStyle = '''
-            *{  
+            *{
                 background-color: 'grey';
                 border: 2px solid 'black';
                 width: 55%;
-                height: 55%;   
+                height: 55%;
             }
         '''
         self.__widget.setStyleSheet(self.__defaultStyle)
@@ -36,7 +36,15 @@ class Position:
         if len(self.__pawns == 2):
             print('Erro tentando adicionar um terceiro peão a uma casa')
 
+        # E caso seja peão de outro jogador
+        killedPawn = None
+        if self.__pawns[0].player != pawn.player:
+            killedPawn = self.__pawns.pop(0)
+            killedPawn.returnToHouse()
+
         self.__pawns.append(pawn)
+        # Modificar a imagem da posição atual
+        return killedPawn
 
     @property
     def pawns(self) -> List[AbstractPawn]:

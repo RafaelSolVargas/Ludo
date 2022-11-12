@@ -7,15 +7,20 @@ from Abstractions.AbstractPlayer import AbstractPlayer
 
 
 class Pawn:
-    def __init__(self, player: AbstractPlayer, path: List[Position], house: AbstractHouse) -> None:
+    def __init__(self, player: AbstractPlayer, path: List[Position], house: AbstractHouse, id: int) -> None:
         self.__path: List[Position] = path
         self.__player: AbstractPlayer = player
         self.__color: PlayerColor = player.color
+        self.__id = id
 
         self.__status: PawnStatus = PawnStatus.STORED
         # -1 for in house or > -1 for current position in Path
         self.__currentPosIndex = -1
         self.__house = house
+
+    @property
+    def id(self) -> int:
+        return self.__id
 
     @property
     def player(self) -> AbstractPlayer:
@@ -33,7 +38,8 @@ class Pawn:
     def color(self) -> PlayerColor:
         return self.__color
 
-    def kill(self) -> None:
+    def returnToHouse(self) -> None:
+        self.__status = PawnStatus.STORED
         self.__house.receivePawn(self)
 
     @property

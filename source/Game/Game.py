@@ -1,3 +1,4 @@
+from Game.PawnStatus import PawnStatus
 from Views.PlayerInterface import PlayerInterface
 from PyQt5.QtWidgets import QApplication
 from Game.Player import Player
@@ -15,6 +16,9 @@ class Game:
         self.__localPlayer: Player = None
         self.__players: List[Player] = None
         self.__board: Board = None
+
+        self.__winner: Player = None
+        self.__endOfGame: bool = False
 
     @property
     def board(self) -> Board:
@@ -65,19 +69,23 @@ class Game:
             finalPosition = position
             actualQuantMoved += 1
 
+        # Move o peão da casa inicial para a final
+        firstPosition.removePawn()
+
         killedPawn = None
         # Se existe alguém na posição final
         if not finalPosition.isFree:
             # E caso seja peão de outro jogador
             if finalPosition.pawns[0].player != pawn.player:
                 killedPawn = finalPosition.pawns[0]
-                killedPawn.kill()
+                killedPawn.returnToHouse()
 
-        # Move o peão da casa inicial para a final
-        firstPosition.removePawn()
         finalPosition.receivePawn(pawn)
         # Add a quantidade correta de casas que foram movidas
         pawn.currentPosIndex += actualQuantMoved
+
+        if finalPosition == pawn.path[-1]:
+            pawn.status = PawnStatus.FINISHED
 
         return (killedPawn, overreachedQuant)
 
@@ -94,7 +102,22 @@ class Game:
             house = board.houses[index]
             # Pega o path da casa
             path = self.__board.getPlayerPath(house.color)
-            # Configura a casa
-            house.configureMatch(path, player)
+            # Configura a casa e adiciona os Pawns criados para dentro do Player
+            pawns = house.configureMatch(path, player)
+            player.pawns = pawns
             # Já configura a cor do player pela casa que ele recebe
             player.house = house
+
+    def verifyWinner(self, player: Player) -> bool:
+        pawns = player.pawns
+        allPawnsFinished = True
+        for pawn in pawns:
+            if pawn.status != PawnStatus.FINISHED:
+                allPawnsFinished = False
+                break
+
+        if allPawnsFinished:
+            self.__winner = player
+            self.__endOfGame = True
+            return True
+        return False
