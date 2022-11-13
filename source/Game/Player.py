@@ -23,6 +23,13 @@ class Player(AbstractPlayer):
         self.__path: List[Position] = []
         self.__pawnIcon: str = ""
 
+    def getPawnFromID(self, pawnID: int) -> Pawn:
+        for pawn in self.__pawns:
+            if pawn.id == pawnID:
+                return pawn
+
+        print(f'Pawn {pawnID} não encontrada em Player {self.id}')
+
     @property
     def house(self) -> House:
         return self.__house

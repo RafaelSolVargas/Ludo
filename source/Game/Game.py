@@ -20,6 +20,8 @@ class Game:
         self.__winner: Player = None
         self.__endOfGame: bool = False
 
+        self.__turnPlayer: Player = None
+
     @property
     def board(self) -> Board:
         return self.__board
@@ -47,8 +49,33 @@ class Game:
         for player in players:
             player.reset()
 
-    def processMove(move: dict) -> None:
-        pass
+    def processMove(self, move: dict) -> None:
+        """
+        Um move é um dicionário com as seguintes chaves:
+        pawnPositionList -> Lista de Tuplas de id de peões e id de positions que eles estão agora: List[Tuple[int, int]]
+        pawnToHouseList -> Lista de id de peões que foram mortos no ultimo movimento: List[int]
+        playerID -> ID do player que acabou de jogar
+        willPlayAgain -> Bool se o jogador irá jogar novamente ou não
+        """
+        pawnPositionList = self.getPawnPositionList(move)
+        movePlayer = self.getPlayerFromMove(move)
+
+        for (pawnID, posID) in pawnPositionList:
+            pawn = movePlayer.getPawnFromID(pawnID)
+            position = self.__board.getPositionFromID(posID)
+            position.receivePawn(pawn)
+
+        # Se tiver vencedor o atributo self.__winner será modificado
+        self.verifyWinner(movePlayer)
+
+        if self.__winner == None:
+            rollAgain = self.checkReroll(move)
+
+            if not rollAgain:
+                movePlayer.endTurn()
+                self.goToNextPlayer(movePlayer)
+        else:
+            self.__interface.setMessage(f'{movePlayer.name} WON')
 
     def movePawn(self, pawn: Pawn, distance: int) -> Tuple[Pawn, int]:
         """
@@ -142,3 +169,35 @@ class Game:
             self.__endOfGame = True
             return True
         return False
+
+    def getPlayerFromMove(self, move: dict) -> Player:
+        playerID = move['playerID']
+
+        for player in self.__players:
+            if player.id == playerID:
+                return player
+
+        print('getPlayerFromMove não encontrou player')
+
+    def checkReroll(self, move: dict) -> bool:
+        return move['willPlayAgain']
+
+    def goToNextPlayer(self, currentPlayer: Player) -> Player:
+        # Pega o index do currentPlayer na lista de players
+        currentPlayerIndex = 0
+        for index, player in enumerate(self.__players):
+            if player == currentPlayer:
+                currentPlayerIndex = index
+                break
+
+        # Passa para o próximo
+        currentPlayerIndex += 1
+        # Se ultrapassar o final volta para o começo da lista
+        if currentPlayerIndex == len(self.__players):
+            currentPlayerIndex = 0
+
+        self.__turnPlayer = self.__players[currentPlayerIndex]
+        self.__turnPlayer.startTurn()
+
+    def getPawnPositionList(self, move: dict) -> List[Tuple[int, int]]:
+        return move['pawnPositionList']

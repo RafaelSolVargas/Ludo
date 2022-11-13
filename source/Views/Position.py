@@ -44,7 +44,11 @@ class Position:
         if len(self.__pawns == 2):
             print('Erro tentando adicionar um terceiro peão a uma casa')
 
-        # E caso seja peão de outro jogador
+        if len(self.__pawns == 0):
+            self.__pawns.append(pawn)
+            return None
+
+        # Caso seja peão de outro jogador
         killedPawn = None
         if self.__pawns[0].player != pawn.player:
             killedPawn = self.__pawns.pop(0)
