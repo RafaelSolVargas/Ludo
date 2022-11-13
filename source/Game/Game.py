@@ -29,6 +29,27 @@ class Game:
         self.__interface.run()
         self.__app.exec()
 
+    def getTurnPlayer(self) -> Player:
+        for player in self.__players:
+            if player.hasTurn:
+                return player
+
+        print('No Turn Player')
+
+    @property
+    def players(self) -> List[Player]:
+        return self.__players
+
+    def reset(self) -> None:
+        self.__board.reset()
+        players = self.__players
+
+        for player in players:
+            player.reset()
+
+    def processMove(move: dict) -> None:
+        pass
+
     def movePawn(self, pawn: Pawn, distance: int) -> Tuple[Pawn, int]:
         """
         Move um peão por uma distance determinada, o retorno é uma tupla com um Pawn e um 
@@ -90,7 +111,7 @@ class Game:
         return (killedPawn, overreachedQuant)
 
     def startMatch(self, players: List[Player], board: Board, localID: int):
-        print(board)
+        self.__players = players
         self.__board = board
 
         for index, player in enumerate(players):

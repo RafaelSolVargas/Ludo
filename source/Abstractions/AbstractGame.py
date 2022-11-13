@@ -6,5 +6,5 @@ from Abstractions.AbstractBoard import AbstractBoard
 
 class AbstractGame:
     @abstractmethod
-    def startMatch(self, players: List[Player], pawnsQuant: int, board: AbstractBoard, localID: int):
+    def startMatch(self, players: List[Player], board: AbstractBoard, localID: int):
         pass

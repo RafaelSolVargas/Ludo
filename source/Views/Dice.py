@@ -19,6 +19,10 @@ class Dice:
 
         self.__start()
 
+    @property
+    def diceValue(self) -> int:
+        return self.__number
+
     def __setWidget(self) -> None:
         self.__widget.setLayout(self.__grid)
         self.__widget.setStyleSheet(self.__style)

@@ -20,8 +20,35 @@ class Player(AbstractPlayer):
         self.__canRollAgain: bool = False
         self.__canSelectFromHouse: bool = False
         self.__canConfirmPiece: bool = False
-        self.__path = List[Position] = []
+        self.__path: List[Position] = []
         self.__pawnIcon: str = ""
+
+    @property
+    def house(self) -> House:
+        return self.__house
+
+    @house.setter
+    def house(self, house: House):
+        self.__house = house
+        self.__color = self.__house.color
+
+    @property
+    def pawns(self) -> List[Pawn]:
+        return self.__pawns
+
+    @pawns.setter
+    def pawns(self, pawns: List[Pawn]):
+        self.__pawns = pawns
+        self.__path = pawns[0].path
+
+    def reset(self) -> None:
+        self.__hasTurn: bool = False
+        self.__isWinner: bool = False
+        self.__canRollDice: bool = False
+        self.__canRollAgain: bool = False
+        self.__canSelectFromHouse: bool = False
+        self.__canConfirmPiece: bool = False
+        self.__selectedPawn: Pawn = None
 
     def startTurn(self):
         # TODO implement
@@ -94,24 +121,6 @@ class Player(AbstractPlayer):
     @property
     def name(self) -> str:
         return self.__name
-
-    @property
-    def house(self) -> House:
-        return self.__house
-
-    @house.setter
-    def house(self, house: House):
-        self.__house = house
-        self.__color = self.__house.color
-
-    @property
-    def pawns(self) -> List[Pawn]:
-        return self.__pawns
-
-    @pawns.setter
-    def pawns(self, pawns: List[Pawn]):
-        self.__pawns = pawns
-        self.__path = pawns[0].path
 
     @property
     def color(self) -> PlayerColor:

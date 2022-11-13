@@ -5,23 +5,23 @@ from Abstractions.AbstractPlayer import AbstractPlayer
 
 
 class AbstractPawn(ABC):
-    @abstractmethod
     @property
+    @abstractmethod
     def path(self):
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def status(self) -> PawnStatus:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def color(self) -> PlayerColor:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def player(self) -> AbstractPlayer:
         pass
 
@@ -29,12 +29,12 @@ class AbstractPawn(ABC):
     def returnToHouse(self) -> None:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def currentPosIndex(self) -> int:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def currentPosition(self):
         pass

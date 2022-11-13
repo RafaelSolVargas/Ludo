@@ -8,7 +8,7 @@ class AbstractPlayer:
     def setHouse(self, house: AbstractHouse) -> None:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def color(self) -> PlayerColor:
         pass

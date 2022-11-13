@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
-from Views.DiceHerdado import DiceHerdado
 from Views.RollButton import RollButton
 from Views.PushButton import PushButton
 from Config.ButtonsStyles import ButtonsStyles
@@ -11,6 +10,7 @@ class Panel(QWidget):
     def __init__(self, width: int = 800):
         super().__init__()
         self.__width = width
+        self.__message = 'YOUR TIME'
         self.grid = QGridLayout()
         self.__dice: Dice = None
         self.__rollButton: RollButton = None
@@ -18,6 +18,19 @@ class Panel(QWidget):
         self.__setWindow()
         self.__setControl()
         self.setLayout(self.grid)
+
+    @property
+    def message(self) -> str:
+        return self.__message
+
+    @message.setter
+    def message(self, value: str) -> None:
+        self.__message = value
+        self.grid.addWidget(Label(self.__message).widget, 0, 0)
+
+    @property
+    def diceValue(self) -> int:
+        return self.__dice.diceValue
 
     def __setWindow(self):
         # self.setFixedWidth(self.__width)
@@ -50,7 +63,7 @@ class Panel(QWidget):
         self.grid.addLayout(grid_dice, 1, 0)
 
     def __setControl(self):
-        self.grid.addWidget(Label('YOUR TIME').widget, 0, 0)
+        self.grid.addWidget(Label(self.__message).widget, 0, 0)
         self.__setDice()
 
         self.__rollButton = PushButton('ROLL DICE', ButtonsStyles.RollButton, lambda: self.roll())

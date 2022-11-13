@@ -7,9 +7,11 @@ from PyQt5 import QtCore
 
 
 class Position:
-    def __init__(self, color: PositionsColor):
+    def __init__(self, color: PositionsColor, id: int):
         self.__widget = QPushButton()
         self.__selected: bool = False
+
+        self.__id: int = id
 
         self.__pawns: List[AbstractPawn] = []
         self.__color = color
@@ -25,6 +27,12 @@ class Position:
             }
         '''
         self.__widget.setStyleSheet(self.__defaultStyle)
+
+    @property
+    def id(self) -> int:
+        if self.__id == None:
+            print('Erro tentando acessar id de Position não válida')
+        return self.__id
 
     def removePawn(self) -> AbstractPawn:
         if len(self.__pawns == 0):
