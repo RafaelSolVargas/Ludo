@@ -11,10 +11,7 @@ from Views.Image import Image
 from typing import List, Tuple
 from Dog.start_status import StartStatus
 from Abstractions.AbstractGame import AbstractGame
-
-# Não é necessário efetivamente herdar a classe Interface, somente basta implementar os métodos lá definidos
-# simplesmente colocar DogPlayerInterface como classe base de PlayerInterface irá causar um conflito com a classe base
-# QMainWindow.
+from Config.PlayerColor import PlayerColor
 
 
 class PlayerInterface(QMainWindow):
@@ -83,7 +80,7 @@ class PlayerInterface(QMainWindow):
 
         # Add the widgets
         self.__board = Board()
-        self.__panel = Panel()
+        self.__panel = Panel(rollCB=self.__handleRollButton, confirmCB=self.__handleConfirmClick)
 
         self.__grid.addWidget(self.__board, 0, 0)
         self.__grid.addWidget(self.__panel, 0, 1)
@@ -221,14 +218,47 @@ class PlayerInterface(QMainWindow):
             self.__playButton.hide()
             self.__playButton = None
 
+    def __handleRollButton(self) -> None:
+        localPlayer: Player = self.__game.getLocalPlayer()
+
+        if not localPlayer.hasTurn:
+            print('Not Your Turn')
+            return
+        if not localPlayer.canRollDice:
+            print('Dice already rolled, choose your piece')
+            return
+
+        # Rola o dado
+        localPlayer.canRollDice = False
+        self.__panel.roll()
+        diceValue = self.__panel.diceValue
+
+        hasPawnsOut = localPlayer.hasPawnsOutOfHouse()
+
+        # Não tirou 1 nem 6 e não tem peões fora, logo não consegue jogar e a rodada termina aqui
+        if diceValue != 6 and diceValue != 1 and not hasPawnsOut:
+            # Enviar move vazio para o servidor do DOG
+            localPlayer.endTurn()
+            return
+
+        # Caso o dado seja 6 ou 1 ele irá poder selecionar da casa
+        if diceValue == 6 or diceValue == 1:
+            localPlayer.canSelectFromHouse = True
+
+        # Caso tenha tirado 6 pode jogar novamente
+        if diceValue == 6:
+            localPlayer.canRollAgain = True
+
+        localPlayer.canMovePawn = True
+
     def __handleConfirmClick(self) -> None:
         pass
 
     def __handleResetClick(self) -> None:
         pass
 
-    def setMessage(self, message: str) -> None:
-        self.__panel.message = message
+    def setMessage(self, message: str, color: PlayerColor) -> None:
+        self.__panel.setMessage(message, color)
 
     def __playersButtonCallback(self, *args) -> None:
         # O args é passado duas vezes e está ocorrendo a colocação de uma tupla dentro de outra

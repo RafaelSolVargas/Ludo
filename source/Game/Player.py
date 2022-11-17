@@ -4,6 +4,7 @@ from Game.Pawn import Pawn
 from Views.House import House
 from Abstractions.AbstractPlayer import AbstractPlayer
 from Views.Position import Position
+from Game.PawnStatus import PawnStatus
 
 
 class Player(AbstractPlayer):
@@ -18,6 +19,7 @@ class Player(AbstractPlayer):
         self.__isWinner: bool = False
         self.__canRollDice: bool = False
         self.__canRollAgain: bool = False
+        self.__canMovePawn: bool = False
         self.__canSelectFromHouse: bool = False
         self.__canConfirmPiece: bool = False
         self.__path: List[Position] = []
@@ -58,12 +60,23 @@ class Player(AbstractPlayer):
         self.__selectedPawn: Pawn = None
 
     def startTurn(self):
-        # TODO implement
-        pass
+        self.__hasTurn: bool = True
+        self.__canRollDice: bool = True
 
     def endTurn(self):
-        # TODO implement
-        pass
+        self.__hasTurn: bool = False
+        self.__canMovePawn: bool = False
+        self.__canRollDice: bool = False
+        self.__canRollAgain: bool = False
+        self.__canSelectFromHouse: bool = False
+        self.__canConfirmPiece: bool = False
+        self.__selectedPawn: Pawn = None
+
+    def hasPawnsOutOfHouse(self) -> bool:
+        for pawn in self.__pawns:
+            if pawn.status == PawnStatus.MOVING:
+                return True
+        return False
 
     @property
     def selectedPawn(self) -> Pawn:
@@ -80,6 +93,14 @@ class Player(AbstractPlayer):
     @hasTurn.setter
     def hasTurn(self, value: bool) -> None:
         self.__hasTurn = value
+
+    @property
+    def canMovePawn(self) -> bool:
+        return self.__canMovePawn
+
+    @canMovePawn.setter
+    def canMovePawn(self, value: bool) -> None:
+        self.__canMovePawn = value
 
     @property
     def isWinner(self) -> bool:

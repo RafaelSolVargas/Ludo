@@ -47,7 +47,7 @@ class Board(QWidget):
 
     @property
     def houses(self) -> List[House]:
-        """0 -> YELLOW | 1 -> BLUE | 2 -> GREEN | 3 -> RED"""
+        """0 -> BLUE | 1 -> GREEN | 2 -> RED | 3 -> YELLOW"""
         return self.__houses
 
     def getPlayerPath(self, playerColor: PlayerColor):
@@ -124,14 +124,14 @@ class Board(QWidget):
         self.__setBottomMidGrid()
 
     def __setHousesGrid(self) -> None:
-        yellowHouse = House(PlayerColor.YELLOW)
         blueHouse = House(PlayerColor.BLUE)
         greenHouse = House(PlayerColor.GREEN)
         redHouse = House(PlayerColor.RED)
-        self.__houses.append(yellowHouse)
+        yellowHouse = House(PlayerColor.YELLOW)
         self.__houses.append(blueHouse)
         self.__houses.append(greenHouse)
         self.__houses.append(redHouse)
+        self.__houses.append(yellowHouse)
 
         self.__topRightGrid.addWidget(yellowHouse.widget, 0, 2)
         self.__grid.addLayout(self.__topRightGrid, 0, 2)

@@ -38,6 +38,9 @@ class Game:
 
         print('No Turn Player')
 
+    def getLocalPlayer(self) -> Player:
+        return self.__localPlayer
+
     @property
     def players(self) -> List[Player]:
         return self.__players
@@ -75,7 +78,7 @@ class Game:
                 movePlayer.endTurn()
                 self.goToNextPlayer(movePlayer)
         else:
-            self.__interface.setMessage(f'{movePlayer.name} WON')
+            self.__interface.setMessage(f'{movePlayer.name} WON', movePlayer.color)
 
     def movePawn(self, pawn: Pawn, distance: int) -> Tuple[Pawn, int]:
         """
@@ -139,9 +142,12 @@ class Game:
 
     def startMatch(self, players: List[Player], board: Board, localID: int):
         self.__players = players
+        # Order the list in place
+        self.__players.sort(key=lambda x: x.name)
+
         self.__board = board
 
-        for index, player in enumerate(players):
+        for index, player in enumerate(self.__players):
             # Configura o player local pelo ID
             if player.id == localID:
                 self.__localPlayer = player
@@ -155,6 +161,12 @@ class Game:
             player.pawns = pawns
             # Já configura a cor do player pela casa que ele recebe
             player.house = house
+
+        # Configura o primeiro jogador que irá jogar
+        self.__turnPlayer = self.__players[0]
+        self.__interface.setMessage(
+            f'Player Turn: {self.__turnPlayer.name}', self.__turnPlayer.color)
+        self.__turnPlayer.startTurn()
 
     def verifyWinner(self, player: Player) -> bool:
         pawns = player.pawns

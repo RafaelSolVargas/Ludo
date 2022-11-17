@@ -1,32 +1,33 @@
+from typing import Callable
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from Views.RollButton import RollButton
 from Views.PushButton import PushButton
 from Config.ButtonsStyles import ButtonsStyles
 from Views.Label import Label
 from Views.Dice import Dice
+from Config.PlayerColor import PlayerColor
 
 
 class Panel(QWidget):
-    def __init__(self, width: int = 800):
+    def __init__(self, rollCB: Callable = None, confirmCB: Callable = None):
         super().__init__()
-        self.__width = width
+        self.__width = 800
         self.__message = 'YOUR TIME'
         self.grid = QGridLayout()
         self.__dice: Dice = None
         self.__rollButton: RollButton = None
 
         self.__setWindow()
-        self.__setControl()
+        self.__setControl(rollCB)
         self.setLayout(self.grid)
 
     @property
     def message(self) -> str:
         return self.__message
 
-    @message.setter
-    def message(self, value: str) -> None:
+    def setMessage(self, value: str, color: PlayerColor) -> None:
         self.__message = value
-        self.grid.addWidget(Label(self.__message).widget, 0, 0)
+        self.grid.addWidget(Label(self.__message, color).widget, 0, 0)
 
     @property
     def diceValue(self) -> int:
@@ -62,9 +63,9 @@ class Panel(QWidget):
 
         self.grid.addLayout(grid_dice, 1, 0)
 
-    def __setControl(self):
-        self.grid.addWidget(Label(self.__message).widget, 0, 0)
+    def __setControl(self, rollCB: Callable):
+        self.grid.addWidget(Label(self.__message, PlayerColor.BLUE).widget, 0, 0)
         self.__setDice()
 
-        self.__rollButton = PushButton('ROLL DICE', ButtonsStyles.RollButton, lambda: self.roll())
+        self.__rollButton = PushButton('ROLL DICE', ButtonsStyles.RollButton, lambda: rollCB())
         self.grid.addWidget(self.__rollButton, 2, 0)
