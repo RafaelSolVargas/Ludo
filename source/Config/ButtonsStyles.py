@@ -56,14 +56,14 @@ class ButtonsStyles:
         '''
     RollButton = '''
         *{
-        border: 4px solid 'green';
-        border-radius: 25px;
-        font-size: 32px;
+        border: 3px solid 'green';
+        border-radius: 28px;
+        font-size: 20px;
         font-weight: bold;
         color: 'green';
-        padding: 15px;
-        margin-left: 270px;
-        margin-right: 270px;
+        padding: 22px;
+        margin-left: 300px;
+        margin-right: 300px;
         }
 
         *:hover{

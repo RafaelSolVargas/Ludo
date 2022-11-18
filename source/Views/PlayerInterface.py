@@ -12,6 +12,8 @@ from typing import List, Tuple
 from Dog.start_status import StartStatus
 from Abstractions.AbstractGame import AbstractGame
 from Config.PlayerColor import PlayerColor
+from Game.Pawn import Pawn
+from Views.Position import Position
 
 
 class PlayerInterface(QMainWindow):
@@ -35,8 +37,25 @@ class PlayerInterface(QMainWindow):
         self.__localID: str = None
         self.__playerName: str = None
 
-    def sendMove(move: dict) -> None:
-        pass
+    def sendMove(self, player: Player, pawns: List[Pawn], positions: List[Position], canRollAgain: bool, gameFinished: bool) -> None:
+        dictToSend = {}
+        dictToSend['playerID'] = str(player.id)
+        dictToSend['canRollAgain'] = str(canRollAgain)
+        # for x in range(len(pawns)):
+        # dictToSend['pawnPositionList'] = [(pawns[x], positions[x])]
+
+        if canRollAgain:
+            dictToSend["willPlayAgain"] = str(True)
+        else:
+            dictToSend["willPlayAgain"] = str(False)
+
+        if gameFinished:
+            dictToSend["match_status"] = "finished"
+        else:
+            dictToSend["match_status"] = "next"
+
+        print(f'Mandando move {dictToSend}')
+        self.__localActor.send_move(dictToSend)
 
     @property
     def diceValue(self) -> int:
@@ -54,9 +73,10 @@ class PlayerInterface(QMainWindow):
         self.__configureFirstWindow()
 
     def receive_move(self, move: dict):
-        print(move)
+        self.__game.processMove(move)
 
     def receive_start(self, status: StartStatus):
+        print('Receiving Start')
         # Chama o método para desenhar a tela, caso seja chamado diretamente irá ocorrer um erro de threads
         QMetaObject.invokeMethod(self, '_buildBoard')
 
@@ -219,46 +239,22 @@ class PlayerInterface(QMainWindow):
             self.__playButton = None
 
     def __handleRollButton(self) -> None:
-        localPlayer: Player = self.__game.getLocalPlayer()
-
-        if not localPlayer.hasTurn:
-            print('Not Your Turn')
-            return
-        if not localPlayer.canRollDice:
-            print('Dice already rolled, choose your piece')
-            return
-
-        # Rola o dado
-        localPlayer.canRollDice = False
-        self.__panel.roll()
-        diceValue = self.__panel.diceValue
-
-        hasPawnsOut = localPlayer.hasPawnsOutOfHouse()
-
-        # Não tirou 1 nem 6 e não tem peões fora, logo não consegue jogar e a rodada termina aqui
-        if diceValue != 6 and diceValue != 1 and not hasPawnsOut:
-            # Enviar move vazio para o servidor do DOG
-            localPlayer.endTurn()
-            return
-
-        # Caso o dado seja 6 ou 1 ele irá poder selecionar da casa
-        if diceValue == 6 or diceValue == 1:
-            localPlayer.canSelectFromHouse = True
-
-        # Caso tenha tirado 6 pode jogar novamente
-        if diceValue == 6:
-            localPlayer.canRollAgain = True
-
-        localPlayer.canMovePawn = True
+        self.__game.handleRoll()
 
     def __handleConfirmClick(self) -> None:
-        pass
+        self.__game.handleConfirmPiece()
 
     def __handleResetClick(self) -> None:
-        pass
+        self.__game.clearPlayers()
 
-    def setMessage(self, message: str, color: PlayerColor) -> None:
-        self.__panel.setMessage(message, color)
+    def setTurnMessage(self, message: str, color: PlayerColor = PlayerColor.BLACK) -> None:
+        self.__panel.setTurnMessage(message, color)
+
+    def setTitleMessage(self, message: str, color: PlayerColor = PlayerColor.BLACK) -> None:
+        self.__panel.setTitleMessage(message, color)
+
+    def setNotifyMessage(self, message: str, color: PlayerColor = PlayerColor.BLACK) -> None:
+        self.__panel.setNotifyMessage(message, color)
 
     def __playersButtonCallback(self, *args) -> None:
         # O args é passado duas vezes e está ocorrendo a colocação de uma tupla dentro de outra
@@ -295,3 +291,7 @@ class PlayerInterface(QMainWindow):
 
     def __notifyMissingParameters(self) -> None:
         pass
+
+    @property
+    def panel(self) -> Panel:
+        return self.__panel

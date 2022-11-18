@@ -1,5 +1,7 @@
-from Game.PawnStatus import PawnStatus
 from Views.PlayerInterface import PlayerInterface
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import QMetaObject, pyqtSlot
+from Game.PawnStatus import PawnStatus
 from PyQt5.QtWidgets import QApplication
 from Game.Player import Player
 from Game.Board import Board
@@ -8,9 +10,10 @@ from typing import List, Tuple
 import sys
 
 
-class Game:
+class Game(QMainWindow):
     def __init__(self) -> None:
         self.__app = QApplication(sys.argv)
+        super().__init__()
         self.__interface: PlayerInterface = None
 
         self.__localPlayer: Player = None
@@ -31,26 +34,38 @@ class Game:
         self.__interface.run()
         self.__app.exec()
 
-    def getTurnPlayer(self) -> Player:
-        for player in self.__players:
-            if player.hasTurn:
-                return player
+    def handleRoll(self) -> None:
+        if not self.__localPlayer.hasTurn:
+            print('Not Your Turn')
+            return
+        if not self.__localPlayer.canRollDice:
+            print('Dice already rolled, choose your piece')
+            return
 
-        print('No Turn Player')
+        # Rola o dado
+        self.__localPlayer.canRollDice = False
+        self.__interface.panel.roll()
+        diceValue = self.__interface.panel.diceValue
+        self.__interface.setNotifyMessage(f'You rolled {diceValue}')
 
-    def getLocalPlayer(self) -> Player:
-        return self.__localPlayer
+        hasPawnsOut = self.__localPlayer.hasPawnsOutOfHouse()
 
-    @property
-    def players(self) -> List[Player]:
-        return self.__players
+        # Não tirou 1 nem 6 e não tem peões fora, logo não consegue jogar e a rodada termina aqui
+        if not hasPawnsOut:
+            # if diceValue != 6 and diceValue != 1 and not hasPawnsOut:
+            self.__interface.sendMove(self.__localPlayer, [], [], False, False)
+            self.goToNextPlayer()
+            return
 
-    def reset(self) -> None:
-        self.__board.reset()
-        players = self.__players
+        # Caso o dado seja 6 ou 1 ele irá poder selecionar da casa
+        if diceValue == 6 or diceValue == 1:
+            self.__localPlayer.canSelectFromHouse = True
 
-        for player in players:
-            player.reset()
+        # Caso tenha tirado 6 pode jogar novamente
+        if diceValue == 6:
+            self.__localPlayer.canRollAgain = True
+
+        self.__localPlayer.canMovePawn = True
 
     def processMove(self, move: dict) -> None:
         """
@@ -60,6 +75,7 @@ class Game:
         playerID -> ID do player que acabou de jogar
         willPlayAgain -> Bool se o jogador irá jogar novamente ou não
         """
+        print('Processing Move', move)
         pawnPositionList = self.getPawnPositionList(move)
         movePlayer = self.getPlayerFromMove(move)
 
@@ -73,12 +89,47 @@ class Game:
 
         if self.__winner == None:
             rollAgain = self.checkReroll(move)
-
             if not rollAgain:
-                movePlayer.endTurn()
-                self.goToNextPlayer(movePlayer)
+                print('Going to next player')
+                # Executa o método goToNextPlayer na thread principal
+                QMetaObject.invokeMethod(self, 'goToNextPlayer')
+            else:
+                notifyMessage = f'{str(movePlayer.color)} Will play again'
+                self.__interface.setNotifyMessage(notifyMessage)
+                print(f'Esperando próxima jogada do {movePlayer.color}')
         else:
-            self.__interface.setMessage(f'{movePlayer.name} WON', movePlayer.color)
+            self.__interface.setTurnMessage(f'{movePlayer.name} WON', movePlayer.color)
+
+    @pyqtSlot()
+    def goToNextPlayer(self) -> Player:
+        # Para o primeiro caso
+        if self.__turnPlayer is None:
+            self.__turnPlayer = self.__players[0]
+
+        self.__turnPlayer.endTurn()
+
+        # Pega o index do currentPlayer na lista de players
+        currentPlayerIndex = 0
+        for index, player in enumerate(self.__players):
+            if player == self.__turnPlayer:
+                currentPlayerIndex = index
+                break
+
+        # Passa para o próximo
+        currentPlayerIndex += 1
+        # Se ultrapassar o final volta para o começo da lista
+        if currentPlayerIndex == len(self.__players):
+            currentPlayerIndex = 0
+
+        self.__turnPlayer = self.__players[currentPlayerIndex]
+
+        # Atualiza a interface para o próximo jogador
+        if self.__localPlayer == self.__turnPlayer:
+            turnMessage = f'Your Turn'
+        else:
+            turnMessage = f'{str(self.__turnPlayer.color)} Turn'
+        self.__interface.setTurnMessage(turnMessage, self.__turnPlayer.color)
+        self.__turnPlayer.startTurn()
 
     def movePawn(self, pawn: Pawn, distance: int) -> Tuple[Pawn, int]:
         """
@@ -162,11 +213,11 @@ class Game:
             # Já configura a cor do player pela casa que ele recebe
             player.house = house
 
-        # Configura o primeiro jogador que irá jogar
-        self.__turnPlayer = self.__players[0]
-        self.__interface.setMessage(
-            f'Player Turn: {self.__turnPlayer.name}', self.__turnPlayer.color)
-        self.__turnPlayer.startTurn()
+        titleMessage = f'{self.__localPlayer.name} - {str(self.__localPlayer.color)}'
+        self.__interface.setTitleMessage(titleMessage, self.__localPlayer.color)
+
+        # Essa função irá iniciar a rodada com o primeiro jogador
+        self.goToNextPlayer()
 
     def verifyWinner(self, player: Player) -> bool:
         pawns = player.pawns
@@ -192,24 +243,38 @@ class Game:
         print('getPlayerFromMove não encontrou player')
 
     def checkReroll(self, move: dict) -> bool:
-        return move['willPlayAgain']
-
-    def goToNextPlayer(self, currentPlayer: Player) -> Player:
-        # Pega o index do currentPlayer na lista de players
-        currentPlayerIndex = 0
-        for index, player in enumerate(self.__players):
-            if player == currentPlayer:
-                currentPlayerIndex = index
-                break
-
-        # Passa para o próximo
-        currentPlayerIndex += 1
-        # Se ultrapassar o final volta para o começo da lista
-        if currentPlayerIndex == len(self.__players):
-            currentPlayerIndex = 0
-
-        self.__turnPlayer = self.__players[currentPlayerIndex]
-        self.__turnPlayer.startTurn()
+        if move['willPlayAgain'] == 'False':
+            return False
+        return True
 
     def getPawnPositionList(self, move: dict) -> List[Tuple[int, int]]:
-        return move['pawnPositionList']
+        if 'pawnPositionList' in move.keys():
+            return move['pawnPositionList']
+        return []
+
+    def clearPlayers(self) -> None:
+        for player in self.__players:
+            player.reset()
+
+        self.__board.reset()
+
+    def getTurnPlayer(self) -> Player:
+        for player in self.__players:
+            if player.hasTurn:
+                return player
+
+        print('No Turn Player')
+
+    def getLocalPlayer(self) -> Player:
+        return self.__localPlayer
+
+    @property
+    def players(self) -> List[Player]:
+        return self.__players
+
+    def reset(self) -> None:
+        self.__board.reset()
+        players = self.__players
+
+        for player in players:
+            player.reset()

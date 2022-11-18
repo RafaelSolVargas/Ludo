@@ -4,9 +4,10 @@ from Config.PlayerColor import PlayerColor
 
 
 class Label:
-    def __init__(self, name, color: PlayerColor):
-        self.__widget = QLabel(name)
-        self.__style = self.__getStyle(self.__convertPlayerColorToString(color))
+    def __init__(self, message: str, color: PlayerColor, width: int = 800, fontSize: int = 32):
+        self.__widget = QLabel(message)
+        self.__width = width
+        self.__style = self.__getStyle(self.__convertPlayerColorToString(color), fontSize)
         self.__start()
 
     @property
@@ -15,7 +16,7 @@ class Label:
 
     def __start(self):
         self.__widget.setAlignment(QtCore.Qt.AlignCenter)
-        self.__widget.setFixedWidth(800)
+        self.__widget.setFixedWidth(self.__width)
         self.__widget.setFixedHeight(100)
         self.__widget.setStyleSheet(self.__style)
 
@@ -26,14 +27,16 @@ class Label:
             return 'green'
         if color == PlayerColor.RED:
             return 'red'
-        return 'yellow'
+        if color == PlayerColor.YELLOW:
+            return 'yellow'
+        return 'black'
 
-    def __getStyle(self, colorStr: str) -> str:
+    def __getStyle(self, colorStr: str, fontSize: int = 32) -> str:
         return f'''
         *{{
             border-top: 5px solid '{colorStr}';
             border-bottom: 5px solid '{colorStr}';
-            font-size: 32px;
+            font-size: {fontSize}px;
             font-weight: bold;
             color: '{colorStr}';
         }}
