@@ -3,15 +3,17 @@ from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.PlayerColor import PlayerColor
 from Game.Pawn import Pawn
 from Abstractions.AbstractHouse import AbstractHouse
+from Abstractions.AbstractBoard import AbstractBoard
 from Views.Position import Position
-from Views.HousePosition import HousePosition
 from Abstractions.AbstractPlayer import AbstractPlayer
 from Game.PawnStatus import PawnStatus
 
 
 class House(AbstractHouse):
-    def __init__(self, color: PlayerColor):
+    def __init__(self, color: PlayerColor, board: AbstractBoard):
         self.__pawns: List[Pawn] = []
+        self.__positions: List[Position] = []
+        self.__board = board
         self.__player = None
         self.__widget = QWidget()
         self.__color = color
@@ -25,6 +27,12 @@ class House(AbstractHouse):
         for x in range(4):
             self.__pawns.append(Pawn(player, path, self, pawnID))
             pawnID += 1
+
+        # Coloca um peão dentro de cada position que está na house
+        pawnIndex = 0
+        for position in self.__positions:
+            position.receivePawn(self.__pawns[pawnIndex])
+
         self.__player = player
         return self.__pawns
 
@@ -44,9 +52,16 @@ class House(AbstractHouse):
         return self.__pawns
 
     def removePawn(self) -> Pawn:
+        # Para remover um peão verifica se existe peões suficientes
         if len(self.__pawns) > 0:
+            # Remove da lista de peões
             pawn = self.__pawns.pop()
             pawn.status = PawnStatus.MOVING
+            # Procura pela mesma referência do peão só que dentro das positions e remove ele da position
+            for position in self.__positions:
+                if position.pawns[0] == pawn:
+                    position.removePawn()
+
             return pawn
 
         raise IndexError('Tentativa de remover peão de casa já vazia')
@@ -71,10 +86,21 @@ class House(AbstractHouse):
         pawn.status = PawnStatus.STORED
         self.__pawns.append(pawn)
 
+        # Armazena o peão recebido dentro de uma position que estava vazia dentro de house
+        for position in self.__positions:
+            if len(position.pawns) == 0:
+                position.receivePawn(pawn)
+                break
+
     def __setGrid(self) -> None:
+        pawnIndex = -1
         for l in range(2):
             for c in range(2):
-                self.__grid.addWidget(HousePosition(self.__color).widget, l,  c)
+                pawnIndex += 1
+                # Cria as 4 posições dentro da casa
+                position = Position(self.__color, self.__board, None)
+                self.__positions.append(position)
+                self.__grid.addWidget(position.widget, l, c)
 
     def __start(self) -> None:
         self.__widget.setStyleSheet(self.__style)

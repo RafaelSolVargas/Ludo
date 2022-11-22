@@ -7,6 +7,7 @@ from Game.Player import Player
 from Game.Board import Board
 from Game.Pawn import Pawn
 from typing import List, Tuple
+from Views.Position import Position
 import sys
 
 
@@ -36,10 +37,12 @@ class Game(QMainWindow):
 
     def handleRoll(self) -> None:
         if not self.__localPlayer.hasTurn:
+            self.__interface.setNotifyMessage('Not Your Turn')
             print('Not Your Turn')
             return
         if not self.__localPlayer.canRollDice:
-            print('Dice already rolled, choose your piece')
+            self.__interface.setNotifyMessage('Dice already rolled')
+            print('Dice rolled, Choose your piece')
             return
 
         # Rola o dado
@@ -47,12 +50,12 @@ class Game(QMainWindow):
         self.__interface.panel.roll()
         diceValue = self.__interface.panel.diceValue
         self.__interface.setNotifyMessage(f'You rolled {diceValue}')
+        self.__interface.setTurnMessage(f'Now choose your pawn to move')
 
         hasPawnsOut = self.__localPlayer.hasPawnsOutOfHouse()
 
         # Não tirou 1 nem 6 e não tem peões fora, logo não consegue jogar e a rodada termina aqui
-        if not hasPawnsOut:
-            # if diceValue != 6 and diceValue != 1 and not hasPawnsOut:
+        if diceValue != 6 and diceValue != 1 and not hasPawnsOut:
             self.__interface.sendMove(self.__localPlayer, [], [], False, False)
             self.goToNextPlayer()
             return
@@ -66,6 +69,67 @@ class Game(QMainWindow):
             self.__localPlayer.canRollAgain = True
 
         self.__localPlayer.canMovePawn = True
+
+    def checkIfValidPosition(self, pos: Position) -> bool:
+        """
+        Função para verificar se a position selecionada durante o processo de choose piece está correto
+        Deve verificar se existe um peão que pertença ao jogador.
+        """
+        player = self.__turnPlayer
+        isValid: bool = True
+        messageCode: int = 0
+
+        # Se ainda não rodou dado
+        if player.canRollDice:
+            self.__interface.setNotifyMessage('You must roll the dice')
+            return
+
+        # Se tiver 1 peão na casa
+        elif not pos.isFree:
+            # E for do mesmo jogador
+            if player == pos.pawns[0].player:
+                # Olha o status do peão na casa
+                status = pos.pawns[0].status
+                # Caso seja STORED significa que o jogador clicou em uma posição da casa
+                if status == PawnStatus.STORED:
+                    # Verifica se ele consegue levar o peão para a primeira casa do caminho do jogador
+                    if player.canSelectFromHouse:
+                        # Caso não tenha uma barreira no local retorna Falso
+                        if not player.path[0].isBlocked:
+                            isValid = True
+                        else:
+                            isValid = False
+                    # Caso não possa selecionar da casa
+                    else:
+                        isValid = False
+                        messageCode = 2
+                # Caso seja outros status pode selecionar a posição
+                else:
+                    isValid = True
+            # Caso não seja do mesmo jogador retorna falso pq não é válido
+            else:
+                isValid = False
+                messageCode = 1
+        # Nenhum peão na casa
+        else:
+            isValid = False
+            messageCode = 0
+
+        # Caso tenha sido um movimento válido altera a posição selecionada
+        if isValid:
+            player.canConfirmPiece = True
+            player.selectedPawn = pos
+            self.__board.selectedPosition = pos
+
+            message = 'Pawn selected'
+        else:
+            message = self.getInvalidPositionMessage(messageCode)
+
+        self.__interface.setNotifyMessage(message)
+        return isValid
+
+    def handleConfirmPiece(self) -> None:
+        pass
 
     def processMove(self, move: dict) -> None:
         """
@@ -125,7 +189,7 @@ class Game(QMainWindow):
 
         # Atualiza a interface para o próximo jogador
         if self.__localPlayer == self.__turnPlayer:
-            turnMessage = f'Your Turn'
+            turnMessage = f'Your Turn, roll the dice'
         else:
             turnMessage = f'{str(self.__turnPlayer.color)} Turn'
         self.__interface.setTurnMessage(turnMessage, self.__turnPlayer.color)
@@ -133,7 +197,7 @@ class Game(QMainWindow):
 
     def movePawn(self, pawn: Pawn, distance: int) -> Tuple[Pawn, int]:
         """
-        Move um peão por uma distance determinada, o retorno é uma tupla com um Pawn e um 
+        Move um peão por uma distance determinada, o retorno é uma tupla com um Pawn e um
         inteiro, caso o Pawn seja diferente de nulo está contendo um peão que foi morto pelo que se movimentou.
         Caso o inteiro seja diferente de 0 é a quantidade overreached que teve
         """
@@ -278,3 +342,13 @@ class Game(QMainWindow):
 
         for player in players:
             player.reset()
+
+    def getInvalidPositionMessage(self, code: int) -> str:
+        if code == 0:
+            return 'No pawn in this position'
+        if code == 1:
+            return "Pawn's not yours"
+        if code == 2:
+            return 'Cannot choose from house'
+        if code == 3:
+            return 'Barrir is blocking your way out'

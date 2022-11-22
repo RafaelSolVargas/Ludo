@@ -32,3 +32,7 @@ class AbstractGame:
     @abstractmethod
     def clearPlayers(self) -> None:
         pass
+
+    @abstractmethod
+    def checkIfValidPosition(self, position) -> bool:
+        pass

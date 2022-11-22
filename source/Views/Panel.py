@@ -96,8 +96,9 @@ class Panel(QWidget):
     def __setSecondMessageRow(self, color: PlayerColor) -> None:
         self.__secondRow = QHBoxLayout()
         self.__secondRow.addWidget(Label(self.__notifyMessage, color, 400, 20).widget, 0)
-        self.__secondRow.addWidget(Label(self.__turnMessage, color, 400, 28).widget, 1)
+        self.__secondRow.addWidget(Label(self.__turnMessage, color, 400, 20).widget, 1)
         self.grid.addLayout(self.__secondRow, 1, 0)
+        self.show()
 
     def __setButtonsRow(self, rollCB: Callable, confirmPieceCB: Callable) -> None:
         self.__buttonsRow = QHBoxLayout()

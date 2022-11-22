@@ -76,7 +76,7 @@ class PlayerInterface(QMainWindow):
         self.__game.processMove(move)
 
     def receive_start(self, status: StartStatus):
-        print('Receiving Start')
+        print(f'Receiving Start, localPlayer: {self.__playerName}')
         # Chama o método para desenhar a tela, caso seja chamado diretamente irá ocorrer um erro de threads
         QMetaObject.invokeMethod(self, '_buildBoard')
 
@@ -99,7 +99,7 @@ class PlayerInterface(QMainWindow):
         self.__window.showMaximized()
 
         # Add the widgets
-        self.__board = Board()
+        self.__board = Board(self.__game)
         self.__panel = Panel(rollCB=self.__handleRollButton, confirmCB=self.__handleConfirmClick)
 
         self.__grid.addWidget(self.__board, 0, 0)
@@ -203,7 +203,8 @@ class PlayerInterface(QMainWindow):
             self.__notifyMissingParameters()
             return None
 
-        print(f'Iniciando partida com {self.__quantPlayers} players')
+        print(
+            f'Iniciando partida com {self.__quantPlayers} players, localPlayer: {self.__playerName}')
         status = self.__localActor.start_match(self.__quantPlayers)
 
         failed, message = self.__failedToStartMatch(status)
