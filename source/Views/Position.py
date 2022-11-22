@@ -61,10 +61,10 @@ class Position:
     def receivePawn(self, pawn: AbstractPawn) -> None:
         killedPawn = None
         if len(self.__pawns) != 0:
-          	# Caso seja peão de outro jogador
-		    if self.__pawns[0].player != pawn.player:
-             	killedPawn = self.__pawns.pop(0)
-		        killedPawn.returnToHouse()
+            # Caso seja peão de outro jogador
+            if self.__pawns[0].player != pawn.player:
+                killedPawn = self.__pawns.pop(0)
+                killedPawn.returnToHouse()
 
         self.__pawns.append(pawn)
         # Modificar a imagem da posição atual
