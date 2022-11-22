@@ -59,7 +59,7 @@ class Board(QWidget):
             self.__selectedPosition.selected = True
 
     def trySelectPosition(self, pos: Position) -> None:
-        isValid = self.__game.checkIfValidPosition(pos)
+        self.__game.checkIfValidPosition(pos)
 
     @property
     def houses(self) -> List[House]:

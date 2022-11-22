@@ -82,10 +82,10 @@ class Game(QMainWindow):
         # Se ainda não rodou dado
         if player.canRollDice:
             self.__interface.setNotifyMessage('You must roll the dice')
-            return
+            return False
 
         # Se tiver 1 peão na casa
-        elif not pos.isFree:
+        if not pos.isFree:
             # E for do mesmo jogador
             if player == pos.pawns[0].player:
                 # Olha o status do peão na casa
@@ -99,6 +99,7 @@ class Game(QMainWindow):
                             isValid = True
                         else:
                             isValid = False
+                            messageCode = 3
                     # Caso não possa selecionar da casa
                     else:
                         isValid = False
@@ -126,7 +127,6 @@ class Game(QMainWindow):
             message = self.getInvalidPositionMessage(messageCode)
 
         self.__interface.setNotifyMessage(message)
-        return isValid
 
     def handleConfirmPiece(self) -> None:
         pass
@@ -269,6 +269,7 @@ class Game(QMainWindow):
 
             # Seleciona uma casa para o jogador acessando a lista de casas pelo index
             house = board.houses[index]
+            player.house = house
             # Pega o path da casa
             path = self.__board.getPlayerPath(house.color)
             # Configura a casa e adiciona os Pawns criados para dentro do Player

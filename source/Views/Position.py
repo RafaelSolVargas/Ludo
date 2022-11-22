@@ -1,10 +1,11 @@
 from typing import List
 from Config.PositionsColor import PositionsColor
 from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QIcon
 from Abstractions.AbstractPawn import AbstractPawn
 from PyQt5 import QtCore
 from Abstractions.AbstractBoard import AbstractBoard
+from Config.ImagesPath import ImagesPath
 
 
 class Position:
@@ -53,24 +54,21 @@ class Position:
         if len(self.__pawns) == 0:
             print('Erro tentando remover peão de casa vazia')
 
+        # TODO: falta lógica para quando mais de 1 pawn
+        self.__widget.setIcon(QIcon())
         return self.__pawns.pop(0)
 
     def receivePawn(self, pawn: AbstractPawn) -> None:
-        if len(self.__pawns) == 2:
-            print('Erro tentando adicionar um terceiro peão a uma casa')
-
-        if len(self.__pawns) == 0:
-            self.__pawns.append(pawn)
-            return None
-
-        # Caso seja peão de outro jogador
         killedPawn = None
-        if self.__pawns[0].player != pawn.player:
-            killedPawn = self.__pawns.pop(0)
-            killedPawn.returnToHouse()
+        if len(self.__pawns) != 0:
+          	# Caso seja peão de outro jogador
+		    if self.__pawns[0].player != pawn.player:
+             	killedPawn = self.__pawns.pop(0)
+		        killedPawn.returnToHouse()
 
         self.__pawns.append(pawn)
         # Modificar a imagem da posição atual
+        self.__drawPawn(pawn)
         return killedPawn
 
     @property
@@ -100,6 +98,11 @@ class Position:
     @property
     def widget(self) -> QPushButton:
         return self.__widget
+
+    def __drawPawn(self, pawn: AbstractPawn):
+        # TODO: considerar o caso de mais de 1 pawn
+        self.__widget.setIcon(QIcon(pawn.iconPath))
+        self.__widget.setIconSize(QtCore.QSize(50, 50))
 
     def __getStyle(self):
 

@@ -11,6 +11,7 @@ class Pawn:
         self.__path: List[Position] = path
         self.__player: AbstractPlayer = player
         self.__color: PlayerColor = player.color
+        self.__iconPath = self.__getIconPath()
         self.__id = id
 
         self.__status: PawnStatus = PawnStatus.STORED
@@ -38,6 +39,13 @@ class Pawn:
     def color(self) -> PlayerColor:
         return self.__color
 
+    @property
+    def iconPath(self) -> str:
+        return self.__iconPath
+    
+    def __getIconPath(self) -> str:
+        return f"Assets/{self.__color.lower()}Pawn.png"
+    
     def returnToHouse(self) -> None:
         self.__status = PawnStatus.STORED
         self.__house.receivePawn(self)
