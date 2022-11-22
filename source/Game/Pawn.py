@@ -58,7 +58,13 @@ class Pawn:
     def currentPosIndex(self, value) -> int:
         if value > len(self.__path):
             print('Erro tentando settar current position index de peão maior que o path')
+            return
+        
         self.__currentPosIndex = value
+
+    @status.setter
+    def status(self, value: PawnStatus) -> None:
+        self.__status = value    
 
     @property
     def currentPosition(self) -> Position:

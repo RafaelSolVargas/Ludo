@@ -10,3 +10,7 @@ class AbstractBoard(ABC):
     @abstractmethod
     def trySelectPosition(self, position) -> None:
         pass
+    
+    @abstractmethod
+    def getPositionFromID(self, posId: int) -> None:
+        pass

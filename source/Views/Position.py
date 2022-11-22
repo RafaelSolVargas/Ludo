@@ -5,7 +5,6 @@ from PyQt5.QtGui import QCursor, QIcon
 from Abstractions.AbstractPawn import AbstractPawn
 from PyQt5 import QtCore
 from Abstractions.AbstractBoard import AbstractBoard
-from Config.ImagesPath import ImagesPath
 
 
 class Position:
@@ -59,17 +58,14 @@ class Position:
         return self.__pawns.pop(0)
 
     def receivePawn(self, pawn: AbstractPawn) -> None:
-        killedPawn = None
         if len(self.__pawns) != 0:
             # Caso seja peão de outro jogador
             if self.__pawns[0].player != pawn.player:
-                killedPawn = self.__pawns.pop(0)
+                killedPawn = self.removePawn()
                 killedPawn.returnToHouse()
 
         self.__pawns.append(pawn)
-        # Modificar a imagem da posição atual
         self.__drawPawn(pawn)
-        return killedPawn
 
     @property
     def pawns(self) -> List[AbstractPawn]:
@@ -98,7 +94,7 @@ class Position:
     @property
     def widget(self) -> QPushButton:
         return self.__widget
-
+    
     def __drawPawn(self, pawn: AbstractPawn):
         # TODO: considerar o caso de mais de 1 pawn
         self.__widget.setIcon(QIcon(pawn.iconPath))

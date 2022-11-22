@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit
-from PyQt5.QtCore import QMetaObject, pyqtSlot
+from PyQt5.QtCore import QMetaObject, pyqtSlot, Q_ARG
+from PyQt5.QtCore import Qt
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Game.Player import Player
@@ -12,8 +13,6 @@ from typing import List, Tuple
 from Dog.start_status import StartStatus
 from Abstractions.AbstractGame import AbstractGame
 from Config.PlayerColor import PlayerColor
-from Game.Pawn import Pawn
-from Views.Position import Position
 
 
 class PlayerInterface(QMainWindow):
@@ -37,12 +36,11 @@ class PlayerInterface(QMainWindow):
         self.__localID: str = None
         self.__playerName: str = None
 
-    def sendMove(self, player: Player, pawns: List[Pawn], positions: List[Position], canRollAgain: bool, gameFinished: bool) -> None:
+    def sendMove(self, player: Player, pawnPositionList, canRollAgain: bool, gameFinished: bool) -> None:
         dictToSend = {}
         dictToSend['playerID'] = str(player.id)
         dictToSend['canRollAgain'] = str(canRollAgain)
-        # for x in range(len(pawns)):
-        # dictToSend['pawnPositionList'] = [(pawns[x], positions[x])]
+        dictToSend['pawnPositionList'] = pawnPositionList
 
         if canRollAgain:
             dictToSend["willPlayAgain"] = str(True)
@@ -73,7 +71,7 @@ class PlayerInterface(QMainWindow):
         self.__configureFirstWindow()
 
     def receive_move(self, move: dict):
-        self.__game.processMove(move)
+        QMetaObject.invokeMethod(self.__game, 'processMove', value0=Q_ARG(dict, move))
 
     def receive_start(self, status: StartStatus):
         print(f'Receiving Start, localPlayer: {self.__playerName}')

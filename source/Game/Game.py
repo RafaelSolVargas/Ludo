@@ -56,7 +56,7 @@ class Game(QMainWindow):
 
         # Não tirou 1 nem 6 e não tem peões fora, logo não consegue jogar e a rodada termina aqui
         if diceValue != 6 and diceValue != 1 and not hasPawnsOut:
-            self.__interface.sendMove(self.__localPlayer, [], [], False, False)
+            self.__interface.sendMove(self.__localPlayer, [], False, False)
             self.goToNextPlayer()
             return
 
@@ -119,7 +119,7 @@ class Game(QMainWindow):
         # Caso tenha sido um movimento válido altera a posição selecionada
         if isValid:
             player.canConfirmPiece = True
-            player.selectedPawn = pos
+            player.selectedPawn = pos.pawns[0]
             self.__board.selectedPosition = pos
 
             message = 'Pawn selected'
@@ -129,13 +129,50 @@ class Game(QMainWindow):
         self.__interface.setNotifyMessage(message)
 
     def handleConfirmPiece(self) -> None:
-        pass
+        if not self.__localPlayer.hasTurn:
+            self.__interface.setNotifyMessage('Not Your Turn')
+            print('Not Your Turn')
+            return
 
+        if not self.__localPlayer.canConfirmPiece:
+            self.__interface.setNotifyMessage('You must select a piece')
+            return
+        
+        player = self.__turnPlayer
+        player.canConfirmPiece = False
+        
+        pawn = player.selectedPawn
+        hasWinner = False
+        
+        if pawn.status == PawnStatus.STORED:
+            player.house.removePawn()
+            pawn.status = PawnStatus.MOVING
+            pawn.currentPosIndex = 0
+            player.path[0].receivePawn(pawn)
+        else:
+            diceValue = self.__interface.diceValue
+            amountOverreached = self.movePawn(pawn, diceValue)
+            
+            if amountOverreached == 0:
+                if pawn.status == PawnStatus.FINISHED:
+                    hasWinner = self.verifyWinner(player)
+                    # se o jogador do turno é vencedor
+                    if hasWinner:
+                        self.__interface.setTurnMessage("You won!")
+
+        self.__interface.sendMove(player, [(pawn.id, pawn.currentPosition.id)], player.canRollAgain, hasWinner)
+        
+        if player.canRollAgain:
+            player.reset()
+            player.startTurn()
+        else:
+            self.goToNextPlayer()
+        
+    @pyqtSlot()
     def processMove(self, move: dict) -> None:
         """
         Um move é um dicionário com as seguintes chaves:
         pawnPositionList -> Lista de Tuplas de id de peões e id de positions que eles estão agora: List[Tuple[int, int]]
-        pawnToHouseList -> Lista de id de peões que foram mortos no ultimo movimento: List[int]
         playerID -> ID do player que acabou de jogar
         willPlayAgain -> Bool se o jogador irá jogar novamente ou não
         """
@@ -253,7 +290,7 @@ class Game(QMainWindow):
         if finalPosition == pawn.path[-1]:
             pawn.status = PawnStatus.FINISHED
 
-        return (killedPawn, overreachedQuant)
+        return overreachedQuant
 
     def startMatch(self, players: List[Player], board: Board, localID: int):
         self.__players = players

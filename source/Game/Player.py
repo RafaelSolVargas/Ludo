@@ -14,7 +14,6 @@ class Player(AbstractPlayer):
         self.__house: House = None
         self.__color: PlayerColor = None
         self.__pawns: List[Pawn] = []
-        self.__selectedPawn: Pawn = None
         self.__hasTurn: bool = False
         self.__isWinner: bool = False
         self.__canRollDice: bool = False
@@ -23,7 +22,6 @@ class Player(AbstractPlayer):
         self.__canSelectFromHouse: bool = False
         self.__canConfirmPiece: bool = False
         self.__path: List[Position] = []
-        self.__pawnIcon: str = ""
 
     def getPawnFromID(self, pawnID: int) -> Pawn:
         for pawn in self.__pawns:
@@ -57,7 +55,6 @@ class Player(AbstractPlayer):
         self.__canRollAgain: bool = False
         self.__canSelectFromHouse: bool = False
         self.__canConfirmPiece: bool = False
-        self.__selectedPawn: Pawn = None
 
     def startTurn(self):
         self.__hasTurn: bool = True
@@ -77,14 +74,6 @@ class Player(AbstractPlayer):
             if pawn.status == PawnStatus.MOVING:
                 return True
         return False
-
-    @property
-    def selectedPawn(self) -> Pawn:
-        return self.__selectedPawn
-
-    @selectedPawn.setter
-    def selectedPawn(self, pawn: Pawn) -> None:
-        self.__selectedPawn = pawn
 
     @property
     def hasTurn(self) -> bool:
