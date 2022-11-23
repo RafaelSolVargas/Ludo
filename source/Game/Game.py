@@ -95,6 +95,8 @@ class Game(QMainWindow):
                     # Verifica se ele consegue levar o peão para a primeira casa do caminho do jogador
                     if player.canSelectFromHouse:
                         # Caso não tenha uma barreira no local retorna Falso
+                        # TODO -> Alterar isso pq dessa forma a barreira está impedindo a saída de uma terceira peça
+                        # do mesmo jogador quando a barreira está na saída
                         if not player.path[0].isBlocked:
                             isValid = True
                         else:
@@ -104,6 +106,11 @@ class Game(QMainWindow):
                     else:
                         isValid = False
                         messageCode = 2
+                # TODO -> Adicionar isso no diagrama, inclusive o novo messageCode
+                # Nesse caso o cara clicou na última posição
+                elif status == PawnStatus.FINISHED:
+                    isValid = False
+                    messageCode = 4
                 # Caso seja outros status pode selecionar a posição
                 else:
                     isValid = True
@@ -129,30 +136,40 @@ class Game(QMainWindow):
         self.__interface.setNotifyMessage(message)
 
     def handleConfirmPiece(self) -> None:
+        # TODO -> Revisar todo o diagrama de sequencia disso
+        # Caso o jogador não tenha o turno
         if not self.__localPlayer.hasTurn:
             self.__interface.setNotifyMessage('Not Your Turn')
-            print('Not Your Turn')
             return
 
-        if not self.__localPlayer.canConfirmPiece:
+        # Caso o jogador ainda não tenha rolado o dado
+        if self.__localPlayer.canRollDice:
+            self.__interface.setNotifyMessage('Roll the dice first')
+            return
+
+        # Caso o jogador ainda não tenha selecionado uma position ou não pode fazer isso
+        if not self.__localPlayer.canConfirmPiece or self.__board.selectedPosition is None:
             self.__interface.setNotifyMessage('You must select a piece')
             return
-        
+
         player = self.__turnPlayer
         player.canConfirmPiece = False
-        
-        pawn = player.selectedPawn
+
+        pawn = self.__board.selectedPosition.pawns[0]
         hasWinner = False
-        
+
+        # Se o peão ainda estiver dentro da casa vai retirar um peão aleatório da casa
         if pawn.status == PawnStatus.STORED:
-            player.house.removePawn()
-            pawn.status = PawnStatus.MOVING
-            pawn.currentPosIndex = 0
-            player.path[0].receivePawn(pawn)
+            # Reescreve o objeto Pawn que vai ser removido para ser o que a house decidir remover
+            pawn = player.house.removePawn()
+            # Pega a primeira posição do caminho
+            firstPosition = player.path[0]
+            # Coloca o peão que saiu da casa dentro da primeira posição
+            firstPosition.receivePawn(pawn)
         else:
             diceValue = self.__interface.diceValue
             amountOverreached = self.movePawn(pawn, diceValue)
-            
+
             if amountOverreached == 0:
                 if pawn.status == PawnStatus.FINISHED:
                     hasWinner = self.verifyWinner(player)
@@ -160,14 +177,23 @@ class Game(QMainWindow):
                     if hasWinner:
                         self.__interface.setTurnMessage("You won!")
 
-        self.__interface.sendMove(player, [(pawn.id, pawn.currentPosition.id)], player.canRollAgain, hasWinner)
-        
+        pawnPositionList = [(pawn.id, pawn.currentPosition.id)]
+        self.__interface.sendMove(player, pawnPositionList, player.canRollAgain, hasWinner)
+
+        # TODO Colocar isso aqui dentro do diagrama
+        # Tira a seleção da position que teve o peão removido
+        self.__board.selectedPosition.selected = False
+
+        # TODO Adicionar isso no diagrama
+        self.__interface.setNotifyMessage('Pawn moved')
         if player.canRollAgain:
+            # TODO Adicionar isso no diagrama
+            self.__interface.setTurnMessage('You can play again, roll the dice')
             player.reset()
             player.startTurn()
         else:
             self.goToNextPlayer()
-        
+
     @pyqtSlot()
     def processMove(self, move: dict) -> None:
         """
@@ -180,10 +206,25 @@ class Game(QMainWindow):
         pawnPositionList = self.getPawnPositionList(move)
         movePlayer = self.getPlayerFromMove(move)
 
+        # TODO Alterar no diagrama esse check do STORED e o código dentro dele, tbm o remove e update no else
         for (pawnID, posID) in pawnPositionList:
             pawn = movePlayer.getPawnFromID(pawnID)
-            position = self.__board.getPositionFromID(posID)
-            position.receivePawn(pawn)
+            newPosition = self.__board.getPositionFromID(posID)
+
+            # Caso o peão que moveu estava em uma casa anteriormente retira ele da house
+            if pawn.status == PawnStatus.STORED:
+                pawn = movePlayer.house.removePawn()
+
+                # Coloca o peão que saiu da casa na nova position
+                newPosition.receivePawn(pawn)
+            # Caso estivesse no caminho irá remover da position anterior
+            else:
+                # Remove o peão da posição anterior
+                pawn.currentPosition.removePawn()
+                # Coloca dentro da nova posição
+                newPosition.receivePawn(pawn)
+                # Método para alterar o index interno de Pawn
+                pawn.updatePositionIndex(newPosition)
 
         # Se tiver vencedor o atributo self.__winner será modificado
         self.verifyWinner(movePlayer)
@@ -191,17 +232,14 @@ class Game(QMainWindow):
         if self.__winner == None:
             rollAgain = self.checkReroll(move)
             if not rollAgain:
-                print('Going to next player')
-                # Executa o método goToNextPlayer na thread principal
-                QMetaObject.invokeMethod(self, 'goToNextPlayer')
+                self.goToNextPlayer()
             else:
-                notifyMessage = f'{str(movePlayer.color)} Will play again'
+                notifyMessage = f'{str(movePlayer.color)} will play again'
                 self.__interface.setNotifyMessage(notifyMessage)
                 print(f'Esperando próxima jogada do {movePlayer.color}')
         else:
             self.__interface.setTurnMessage(f'{movePlayer.name} WON', movePlayer.color)
 
-    @pyqtSlot()
     def goToNextPlayer(self) -> Player:
         # Para o primeiro caso
         if self.__turnPlayer is None:
@@ -227,6 +265,8 @@ class Game(QMainWindow):
         # Atualiza a interface para o próximo jogador
         if self.__localPlayer == self.__turnPlayer:
             turnMessage = f'Your Turn, roll the dice'
+            # TODO Adicionar essa msg nos diagramas
+            self.__interface.setNotifyMessage('-', self.__turnPlayer.color)
         else:
             turnMessage = f'{str(self.__turnPlayer.color)} Turn'
         self.__interface.setTurnMessage(turnMessage, self.__turnPlayer.color)
@@ -242,7 +282,7 @@ class Game(QMainWindow):
         firstPosition = pawn.path[pawn.currentPosIndex]
         # Faz um loop começando na próxima posição até distance ser atingida
         startIndex = pawn.currentPosIndex + 1
-        endIndex = startIndex + distance + 1
+        endIndex = startIndex + distance
 
         # Caso ultrapasse o final do caminho atualiza o destino final
         overreachedQuant = 0
@@ -390,3 +430,5 @@ class Game(QMainWindow):
             return 'Cannot choose from house'
         if code == 3:
             return 'Barrir is blocking your way out'
+        if code == 4:
+            return 'Pawn already finished the run'

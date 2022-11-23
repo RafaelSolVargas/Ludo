@@ -32,6 +32,7 @@ class House(AbstractHouse):
         pawnIndex = 0
         for position in self.__positions:
             position.receivePawn(self.__pawns[pawnIndex])
+            pawnIndex += 1
 
         self.__player = player
         return self.__pawns
@@ -52,15 +53,20 @@ class House(AbstractHouse):
         return self.__pawns
 
     def removePawn(self) -> Pawn:
+        # TODO -> Revisar qualquer lugar que tenha referência a isso aqui
         # Para remover um peão verifica se existe peões suficientes
         if len(self.__pawns) > 0:
             # Remove da lista de peões
             pawn = self.__pawns.pop()
+            # Atualiza o status do Pawn
             pawn.status = PawnStatus.MOVING
+            # Atualiza o index da posição atual
+            pawn.currentPosIndex = 0
             # Procura pela mesma referência do peão só que dentro das positions e remove ele da position
             for position in self.__positions:
-                if position.pawns[0] == pawn:
-                    position.removePawn()
+                if len(position.pawns) > 0:
+                    if position.pawns[0] == pawn:
+                        position.removePawn()
 
             return pawn
 
@@ -79,6 +85,7 @@ class House(AbstractHouse):
         return len(self.__pawns)
 
     def receivePawn(self, pawn: Pawn) -> None:
+        # TODO -> Revisar qualquer lugar que tenha referência a isso aqui
         if pawn.color != self.__color:
             print(f'House de cor {self.__color} recebendo peão de cor {pawn.color}')
             return

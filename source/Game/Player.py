@@ -45,7 +45,7 @@ class Player(AbstractPlayer):
 
     @pawns.setter
     def pawns(self, pawns: List[Pawn]):
-        self.__pawns = pawns
+        self.__pawns = pawns.copy()
         self.__path = pawns[0].path
 
     def reset(self) -> None:

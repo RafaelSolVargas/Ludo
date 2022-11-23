@@ -35,11 +35,12 @@ class PlayerInterface(QMainWindow):
         # ID para identificar qual o player local
         self.__localID: str = None
         self.__playerName: str = None
+        # Atributo privado para passar instância de move para a thread principal
+        self.__currentMove: dict = None
 
     def sendMove(self, player: Player, pawnPositionList, canRollAgain: bool, gameFinished: bool) -> None:
         dictToSend = {}
         dictToSend['playerID'] = str(player.id)
-        dictToSend['canRollAgain'] = str(canRollAgain)
         dictToSend['pawnPositionList'] = pawnPositionList
 
         if canRollAgain:
@@ -71,7 +72,15 @@ class PlayerInterface(QMainWindow):
         self.__configureFirstWindow()
 
     def receive_move(self, move: dict):
-        QMetaObject.invokeMethod(self.__game, 'processMove', value0=Q_ARG(dict, move))
+        self.__currentMove = move
+        QMetaObject.invokeMethod(self, '_receiveMove')
+
+    @pyqtSlot()
+    def _receiveMove(self):
+        """
+        Método para ser executado na thread principal e chamar o processMove do Game
+        """
+        self.__game.processMove(self.__currentMove)
 
     def receive_start(self, status: StartStatus):
         print(f'Receiving Start, localPlayer: {self.__playerName}')

@@ -51,11 +51,14 @@ class Position:
 
     def removePawn(self) -> AbstractPawn:
         if len(self.__pawns) == 0:
-            print('Erro tentando remover peão de casa vazia')
+            print(f'Erro tentando remover peão da casa {self.id} vazia')
 
+        pawnRemoved = self.__pawns.pop(0)
         # TODO: falta lógica para quando mais de 1 pawn
-        self.__widget.setIcon(QIcon())
-        return self.__pawns.pop(0)
+        if len(self.__pawns) == 0:
+            self.__widget.setIcon(QIcon())
+
+        return pawnRemoved
 
     def receivePawn(self, pawn: AbstractPawn) -> None:
         if len(self.__pawns) != 0:
@@ -94,7 +97,7 @@ class Position:
     @property
     def widget(self) -> QPushButton:
         return self.__widget
-    
+
     def __drawPawn(self, pawn: AbstractPawn):
         # TODO: considerar o caso de mais de 1 pawn
         self.__widget.setIcon(QIcon(pawn.iconPath))

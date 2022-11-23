@@ -42,12 +42,23 @@ class Pawn:
     @property
     def iconPath(self) -> str:
         return self.__iconPath
-    
+
     def __getIconPath(self) -> str:
         return f"Assets/{self.__color.lower()}Pawn.png"
-    
+
+    def updatePositionIndex(self, position: Position) -> None:
+        """
+        Recebe um objeto position e atualiza o atributo interno currentPosIndex para condizer com o atual
+        """
+        for index, pathPos in enumerate(self.__path):
+            if position == pathPos:
+                self.__currentPosIndex = index
+                return
+        print(f'Position {position.id} not found in pawn {self.id} path')
+
     def returnToHouse(self) -> None:
         self.__status = PawnStatus.STORED
+        self.__currentPosIndex = -1
         self.__house.receivePawn(self)
 
     @property
@@ -59,12 +70,12 @@ class Pawn:
         if value > len(self.__path):
             print('Erro tentando settar current position index de peão maior que o path')
             return
-        
+
         self.__currentPosIndex = value
 
     @status.setter
     def status(self, value: PawnStatus) -> None:
-        self.__status = value    
+        self.__status = value
 
     @property
     def currentPosition(self) -> Position:
