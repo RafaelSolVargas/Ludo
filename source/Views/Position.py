@@ -74,7 +74,7 @@ class Position:
 
     @property
     def isBlocked(self) -> bool:
-        return len(self.__pawns) == 2
+        return len(self.__pawns) >= 2
 
     @property
     def isFree(self) -> bool:
@@ -99,11 +99,11 @@ class Position:
     # TODO: alterar nome e interface da função no diagrama
     def __updateSelfInterface(self):
         numberOfPawns = len(self.__pawns)
-        
+
         if numberOfPawns == 0:
-          self.__widget.setIcon(QIcon())
-          return
-        
+            self.__widget.setIcon(QIcon())
+            return
+
         iconPath = f"Assets/{self.__pawns[0].color}/{numberOfPawns}.png"
         self.__widget.setIcon(QIcon(iconPath))
         self.__widget.setIconSize(QtCore.QSize(50, 50))
