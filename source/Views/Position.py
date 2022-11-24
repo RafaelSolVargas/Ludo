@@ -54,9 +54,7 @@ class Position:
             print(f'Erro tentando remover peão da casa {self.id} vazia')
 
         pawnRemoved = self.__pawns.pop(0)
-        # TODO: falta lógica para quando mais de 1 pawn
-        if len(self.__pawns) == 0:
-            self.__widget.setIcon(QIcon())
+        self.__updateSelfInterface()
 
         return pawnRemoved
 
@@ -68,7 +66,7 @@ class Position:
                 killedPawn.returnToHouse()
 
         self.__pawns.append(pawn)
-        self.__drawPawn(pawn)
+        self.__updateSelfInterface()
 
     @property
     def pawns(self) -> List[AbstractPawn]:
@@ -98,9 +96,16 @@ class Position:
     def widget(self) -> QPushButton:
         return self.__widget
 
-    def __drawPawn(self, pawn: AbstractPawn):
-        # TODO: considerar o caso de mais de 1 pawn
-        self.__widget.setIcon(QIcon(pawn.iconPath))
+    # TODO: alterar nome e interface da função no diagrama
+    def __updateSelfInterface(self):
+        numberOfPawns = len(self.__pawns)
+        
+        if numberOfPawns == 0:
+          self.__widget.setIcon(QIcon())
+          return
+        
+        iconPath = f"Assets/{self.__pawns[0].color}/{numberOfPawns}.png"
+        self.__widget.setIcon(QIcon(iconPath))
         self.__widget.setIconSize(QtCore.QSize(50, 50))
 
     def __getStyle(self):
