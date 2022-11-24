@@ -95,13 +95,17 @@ class Game(QMainWindow):
                     # Verifica se ele consegue levar o peão para a primeira casa do caminho do jogador
                     if player.canSelectFromHouse:
                         # Caso não tenha uma barreira no local retorna Falso
-                        # TODO -> Alterar isso pq dessa forma a barreira está impedindo a saída de uma terceira peça
-                        # do mesmo jogador quando a barreira está na saída
                         if not player.path[0].isBlocked:
                             isValid = True
                         else:
-                            isValid = False
-                            messageCode = 3
+                            # TODO -> Colocar esse check no diagrama
+                            # Verifica se é do mesmo jogador, se sim pode passar
+                            if player.path[0].pawns[0].player == player:
+                                isValid = True
+                            else:
+                                # Se não fica travado dentro da casa
+                                isValid = False
+                                messageCode = 3
                     # Caso não possa selecionar da casa
                     else:
                         isValid = False
@@ -429,6 +433,6 @@ class Game(QMainWindow):
         if code == 2:
             return 'Cannot choose from house'
         if code == 3:
-            return 'Barrir is blocking your way out'
+            return 'Barrier is blocking your way out'
         if code == 4:
             return 'Pawn already finished the run'
