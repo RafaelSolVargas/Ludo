@@ -96,7 +96,6 @@ class Position:
     def widget(self) -> QPushButton:
         return self.__widget
 
-    # TODO: alterar nome e interface da função no diagrama
     def __updateSelfInterface(self):
         numberOfPawns = len(self.__pawns)
 

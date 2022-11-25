@@ -182,14 +182,11 @@ class Game(QMainWindow):
         pawnPositionList = [(pawn.id, pawn.currentPosition.id)]
         self.__interface.sendMove(player, pawnPositionList, player.canRollAgain, hasWinner)
 
-        # TODO Colocar isso aqui dentro do diagrama
         # Tira a seleção da position que teve o peão removido
         self.__board.selectedPosition.selected = False
 
-        # TODO Adicionar isso no diagrama
         self.__interface.setNotifyMessage('Pawn moved')
         if player.canRollAgain:
-            # TODO Adicionar isso no diagrama
             self.__interface.setTurnMessage('You can play again, roll the dice')
             player.reset()
             player.startTurn()

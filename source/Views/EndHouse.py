@@ -1,7 +1,7 @@
 from Config.PositionsColor import PositionsColor
 from PyQt5.QtWidgets import QWidget
 
-
+#TODO: adicionar classe ao diagrama de classes de interface
 class EndHouse:
     def __init__(self, color: PositionsColor):
         self.__widget = QWidget()

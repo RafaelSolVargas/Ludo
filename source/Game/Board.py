@@ -23,6 +23,7 @@ class Board(QWidget):
         self.__selectedPosition: Position = None
 
         self.__start()
+        #TODO: remover classe Path dos diagramas de classe, sequência e algoritmo
         self.__bluePath = self.__getBluePath()
         self.__redPath = self.__getRedPath()
         self.__yellowPath = self.__getYellowPath()
