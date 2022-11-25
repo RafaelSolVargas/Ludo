@@ -53,7 +53,6 @@ class House(AbstractHouse):
         return self.__pawns
 
     def removePawn(self) -> Pawn:
-        # TODO -> Revisar qualquer lugar que tenha referência a isso aqui
         # Para remover um peão verifica se existe peões suficientes
         if len(self.__pawns) > 0:
             # Remove da lista de peões

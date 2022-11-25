@@ -98,7 +98,6 @@ class Game(QMainWindow):
                         if not player.path[0].isBlocked:
                             isValid = True
                         else:
-                            # TODO -> Colocar esse check no diagrama
                             # Verifica se é do mesmo jogador, se sim pode passar
                             if player.path[0].pawns[0].player == player:
                                 isValid = True
@@ -110,7 +109,6 @@ class Game(QMainWindow):
                     else:
                         isValid = False
                         messageCode = 2
-                # TODO -> Adicionar isso no diagrama, inclusive o novo messageCode
                 # Nesse caso o cara clicou na última posição
                 elif status == PawnStatus.FINISHED:
                     isValid = False
@@ -210,7 +208,6 @@ class Game(QMainWindow):
         pawnPositionList = self.getPawnPositionList(move)
         movePlayer = self.getPlayerFromMove(move)
 
-        # TODO Alterar no diagrama esse check do STORED e o código dentro dele, tbm o remove e update no else
         for (pawnID, posID) in pawnPositionList:
             pawn = movePlayer.getPawnFromID(pawnID)
             newPosition = self.__board.getPositionFromID(posID)
