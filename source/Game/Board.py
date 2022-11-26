@@ -2,9 +2,8 @@ from PyQt5.QtWidgets import QWidget, QGridLayout
 from Config.PositionsColor import PositionsColor
 from Config.PlayerColor import PlayerColor
 from Views.House import House
-from Views.EndHouse import EndHouse
+from Views.NonClickablePosition import NonClickablePosition
 from Views.Position import Position
-from Views.EndHouse import EndHouse
 from typing import List
 from Abstractions.AbstractGame import AbstractGame
 
@@ -23,7 +22,7 @@ class Board(QWidget):
         self.__selectedPosition: Position = None
 
         self.__start()
-        #TODO: remover classe Path dos diagramas de classe, sequência e algoritmo
+        # TODO: remover classe Path dos diagramas de classe, sequência e algoritmo
         self.__bluePath = self.__getBluePath()
         self.__redPath = self.__getRedPath()
         self.__yellowPath = self.__getYellowPath()
@@ -292,14 +291,14 @@ class Board(QWidget):
         self.__midMidGrid.addWidget(position.widget, 1, 0)
 
         # --------------- Casa final(inicio)
-        position = EndHouse(PositionsColor.RED_YELLOW)
+        position = NonClickablePosition(PositionsColor.RED_YELLOW)
         self.__midMidGrid.addWidget(position.widget, 1, 1)
 
         position = Position(PositionsColor.YELLOW, self, 6)
         self.__positions[6] = position
         self.__midMidGrid.addWidget(position.widget, 1, 2)
 
-        position = EndHouse(PositionsColor.BLUE_YELLOW)
+        position = NonClickablePosition(PositionsColor.BLUE_YELLOW)
         self.__midMidGrid.addWidget(position.widget, 1, 3)
         # --------------- Casa final(fim)
 
@@ -317,7 +316,7 @@ class Board(QWidget):
         self.__positions[66] = position
         self.__midMidGrid.addWidget(position.widget, 2, 1)
 
-        position = EndHouse(PositionsColor.FULL)
+        position = NonClickablePosition(PositionsColor.FULL)
         self.__midMidGrid.addWidget(position.widget, 2, 2)
 
         position = Position(PositionsColor.BLUE, self, 26)
@@ -335,14 +334,14 @@ class Board(QWidget):
         self.__midMidGrid.addWidget(position.widget, 3, 0)
 
         # --------------- Casa final(inicio)
-        position = EndHouse(PositionsColor.RED_GREEN)
+        position = NonClickablePosition(PositionsColor.RED_GREEN)
         self.__midMidGrid.addWidget(position.widget, 3, 1)
 
         position = Position(PositionsColor.GREEN, self, 46)
         self.__positions[46] = position
         self.__midMidGrid.addWidget(position.widget, 3, 2)
 
-        position = EndHouse(PositionsColor.BLUE_GREEN)
+        position = NonClickablePosition(PositionsColor.BLUE_GREEN)
         self.__midMidGrid.addWidget(position.widget, 3, 3)
         # --------------- Casa final(fim)
 

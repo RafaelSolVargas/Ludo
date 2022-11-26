@@ -180,3 +180,59 @@ class Position:
                 height: 55%;     
             }
             '''
+
+        elif self.__color == PositionsColor.FULL:
+            return '''
+                *{  
+                    border-top: 30px solid yellow;
+                    border-right: 30px solid blue;
+                    border-bottom: 30px solid green;
+                    border-left: 30px solid red;
+                    width: 55%;
+                    height: 55%;  
+                }
+                '''
+        elif self.__color == PositionsColor.RED_YELLOW:
+            return '''
+                *{  
+                    border-right: 30px solid yellow;
+                    border-top: 30px solid yellow;
+                    border-left: 30px solid red;
+                    border-bottom: 30px solid red;
+                    width: 55%;
+                    height: 55%;  
+                }
+                '''
+        elif self.__color == PositionsColor.RED_GREEN:
+            return '''
+                *{  
+                    border-bottom: 30px solid green;
+                    border-right: 30px solid green;
+                    border-left: 30px solid red;
+                    border-top: 30px solid red;
+                    width: 55%;
+                    height: 55%;  
+                }
+                '''
+        elif self.__color == PositionsColor.BLUE_GREEN:
+            return '''
+                *{  
+                    border-top: 30px solid blue;
+                    border-right: 30px solid blue;
+                    border-left: 30px solid green;
+                    border-bottom: 30px solid green;
+                    width: 55%;
+                    height: 55%;  
+                }
+                '''
+        elif self.__color == PositionsColor.BLUE_YELLOW:  # Blue_Yellow
+            return '''
+                *{  
+                    border-top: 30px solid yellow;
+                    border-left: 30px solid yellow;
+                    border-right: 30px solid blue;
+                    border-bottom: 30px solid blue;
+                    width: 55%;
+                    height: 55%;  
+                }
+                '''

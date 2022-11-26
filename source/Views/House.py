@@ -84,7 +84,6 @@ class House(AbstractHouse):
         return len(self.__pawns)
 
     def receivePawn(self, pawn: Pawn) -> None:
-        # TODO -> Revisar qualquer lugar que tenha referência a isso aqui
         if pawn.color != self.__color:
             print(f'House de cor {self.__color} recebendo peão de cor {pawn.color}')
             return

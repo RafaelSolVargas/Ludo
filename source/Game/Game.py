@@ -239,6 +239,8 @@ class Game(QMainWindow):
             self.__interface.setTurnMessage(f'{movePlayer.name} WON', movePlayer.color)
 
     def goToNextPlayer(self) -> Player:
+        # TODO -> Implementar uma modelagem de algoritmo desse método pois não está em nenhum lugar dos diagramas
+        # TODO -> Após implementar método adicionar referência nos diagramas no qual é chamado, são 3 ao todo
         # Para o primeiro caso
         if self.__turnPlayer is None:
             self.__turnPlayer = self.__players[0]
@@ -263,7 +265,6 @@ class Game(QMainWindow):
         # Atualiza a interface para o próximo jogador
         if self.__localPlayer == self.__turnPlayer:
             turnMessage = f'Your Turn, roll the dice'
-            # TODO Adicionar essa msg nos diagramas
             self.__interface.setNotifyMessage('-', self.__turnPlayer.color)
         else:
             turnMessage = f'{str(self.__turnPlayer.color)} Turn'
