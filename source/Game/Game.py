@@ -277,20 +277,27 @@ class Game(QMainWindow):
         inteiro, caso o Pawn seja diferente de nulo está contendo um peão que foi morto pelo que se movimentou.
         Caso o inteiro seja diferente de 0 é a quantidade overreached que teve
         """
+        # TODO -> Alterar a modelagem de algoritmo de movePawn
+        # Inicializa valores padronizados
+        hasOverreachedQuant = False
+        actualQuantMoved = 0
+        finalPosition = pawn.currentPosition
+
         # Pega a posição atual do peão
         firstPosition = pawn.path[pawn.currentPosIndex]
         # Faz um loop começando na próxima posição até distance ser atingida
         startIndex = pawn.currentPosIndex + 1
         endIndex = startIndex + distance
 
-        # Caso ultrapasse o final do caminho atualiza o destino final
+        # Caso ultrapasse o final do caminho seta logo a finalPosition como a ultima
         overreachedQuant = 0
         if endIndex > len(pawn.path):
+            hasOverreachedQuant = True
             overreachedQuant = endIndex - len(pawn.path)
-            endIndex -= overreachedQuant
+            endIndex = len(pawn.path) - overreachedQuant
+            # Não é necessário validações quanto a barreira
+            finalPosition = pawn.path[endIndex - 1]
 
-        actualQuantMoved = 0
-        finalPosition = None
         for positionIndex in range(startIndex, endIndex):
             # Pega a posição atual para verificar
             position = pawn.path[positionIndex]
@@ -301,30 +308,19 @@ class Game(QMainWindow):
                     finalPosition = pawn.path[positionIndex - 1]
                     break
 
-                # Caso a posição final do peão seja na casa com barreira
-                # e a barreira seja do mesmo player paramos uma antes
-                if positionIndex == endIndex - 1:
-                    finalPosition = pawn.path[positionIndex - 1]
-                    break
-
             # Vai atualizando a ultima posição
             finalPosition = position
             actualQuantMoved += 1
 
-        # Move o peão da casa inicial para a final
+        # Remove o peão da posição que ele estava antes
         firstPosition.removePawn()
-
-        killedPawn = None
-        # Se existe alguém na posição final
-        if not finalPosition.isFree:
-            # E caso seja peão de outro jogador
-            if finalPosition.pawns[0].player != pawn.player:
-                killedPawn = finalPosition.pawns[0]
-                killedPawn.returnToHouse()
-
+        # E coloca ele na nova posição, os casos que peões foram mortos são tratados dentro de Position.receivePawn()
         finalPosition.receivePawn(pawn)
         # Add a quantidade correta de casas que foram movidas
-        pawn.currentPosIndex += actualQuantMoved
+        if hasOverreachedQuant:
+            pawn.currentPosIndex = endIndex - 1
+        else:
+            pawn.currentPosIndex += actualQuantMoved
 
         if finalPosition == pawn.path[-1]:
             pawn.status = PawnStatus.FINISHED
