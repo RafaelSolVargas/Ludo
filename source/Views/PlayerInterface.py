@@ -1,6 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit
+from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit, QLabel
 from PyQt5.QtCore import QMetaObject, pyqtSlot, Q_ARG
 from PyQt5.QtCore import Qt
+from PyQt5 import QtCore
+from PyQt5 import QtGui
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Game.Player import Player
@@ -136,7 +138,7 @@ class PlayerInterface(QMainWindow):
 
         self.__playerButtons.append(self.__inputText)
         self.__playButton = PushButton(
-            'PLAY', ButtonsStyles.PlayButton, self.__configureSecondWindow)
+            'PLAY', ButtonsStyles.PlayButton, self.__configureConnWindow)
 
         # Add the widgets to the grid
         self.__grid.addWidget(self.__images[0], 0, 0)
@@ -148,22 +150,6 @@ class PlayerInterface(QMainWindow):
         self.__window.show()
 
     def __configureSecondWindow(self) -> None:
-        self.__playerName = self.__inputText.text()
-
-        if self.__playerName == '':
-            print('Escolha um nome')
-            return None
-
-        self.__localActor = DogActor()
-        connResult = self.__localActor.initialize(self.__playerName, self)
-
-        # If could not connect then we do not pass to the next window
-        if not self.__successfullyConnected(connResult):
-            print(connResult)
-            return None
-
-        print('Conectado ao servidor')
-
         # Clear widgets
         self.__clear()
 
@@ -204,6 +190,42 @@ class PlayerInterface(QMainWindow):
 
         # Adiciona o button de Play na grid
         self.__grid.addWidget(self.__playButton, 4, 0)
+
+    def __configureConnWindow(self):
+        self.__playerName = self.__inputText.text()
+
+        if self.__playerName == '':
+            print('Escolha um nome')
+            return None
+
+        self.__localActor = DogActor()
+        connResult = self.__localActor.initialize(self.__playerName, self)
+
+        # If could not connect then we do not pass to the next window
+        if not self.__successfullyConnected(connResult):
+            print(connResult)
+            return None
+
+         # Clear widgets
+        self.__clear()
+
+        # Configure the window
+        label = QLabel()
+        label.setText('Conectado ao servidor!')
+        label.setStyleSheet("font-size: 50px; color: white; font-weight: bold;")
+        label.move(80, 40)
+        
+        self.__window.setWindowTitle('LUDO')
+        self.__window.setStyleSheet("background: black;")
+        self.__window.move(640, 108)
+        
+
+        self.__playButton = PushButton(
+            'Continue', ButtonsStyles.PlayButton, self.__configureSecondWindow)
+
+        self.__grid.addWidget(label, 0 , 0)
+        self.__grid.addWidget(self.__playButton, 1, 0)
+
 
     def __configureThirdWindow(self):
         if self.__quantPlayers == None:
