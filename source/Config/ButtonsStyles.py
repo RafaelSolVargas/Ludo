@@ -70,3 +70,20 @@ class ButtonsStyles:
         background: '#caeabd';
         }
         '''
+    
+    ResetButton = '''
+        *{
+        border: 3px solid 'black';
+        border-radius: 28px;
+        font-size: 20px;
+        font-weight: bold;
+        color: 'green';
+        padding: 22px;
+        margin-left: 300px;
+        margin-right: 300px;
+        }
+
+        *:hover{
+        background: '#caeabd';
+        }
+        '''

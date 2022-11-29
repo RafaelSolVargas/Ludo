@@ -67,7 +67,11 @@ class Panel(QWidget):
 
         self.__turnMessage = message
         self.__setSecondMessageRow(color)
-
+    
+    def configureResetMatch(self, resetMatchCB: Callable):
+        self.__confirmButton = PushButton(
+            'RESET MATCH', ButtonsStyles.ResetButton, lambda: resetMatchCB())
+    
     def __setDice(self):
         # Desenha o dado
         grid_dice = QGridLayout()

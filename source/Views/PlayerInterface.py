@@ -40,7 +40,7 @@ class PlayerInterface(QMainWindow):
         # Atributo privado para passar instância de move para a thread principal
         self.__currentMove: dict = None
 
-    def sendMove(self, player: Player, pawnPositionList, canRollAgain: bool, gameFinished: bool) -> None:
+    def sendMove(self, player: Player, pawnPositionList, canRollAgain: bool, gameFinished: bool, resetGame: bool) -> None:
         dictToSend = {}
         dictToSend['playerID'] = str(player.id)
         dictToSend['pawnPositionList'] = pawnPositionList
@@ -52,6 +52,8 @@ class PlayerInterface(QMainWindow):
 
         if gameFinished:
             dictToSend["match_status"] = "finished"
+        elif resetGame:
+            dictToSend["match_status"] = "reset"
         else:
             dictToSend["match_status"] = "next"
 
@@ -121,6 +123,13 @@ class PlayerInterface(QMainWindow):
     def receive_withdrawal_notification(self):
         print('Withdraw')
 
+    # TODO: adicionar ao diagrama de classes
+    def configureResetMatch(self):
+        self.__panel.configureResetMatch(self.__handleResetMatch)
+    
+    def __handleResetMatch(self):
+        self.__game.handleResetMatch()
+    
     def __configureFirstWindow(self):
         # Clear widgets
         self.__clear()
