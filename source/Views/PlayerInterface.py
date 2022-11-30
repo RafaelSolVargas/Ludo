@@ -118,8 +118,15 @@ class PlayerInterface(QMainWindow):
     def _startMatch(self) -> None:
         self.__game.startMatch(self.__players, self.__board, self.__localID)
 
+    @pyqtSlot()
+    def _notifyWithdrawal(self):
+        self.setNotifyMessage('A player has withdrawn')
+        self.setTurnMessage('Match ended due to withdrawal')
+    
     def receive_withdrawal_notification(self):
-        print('Withdraw')
+        QMetaObject.invokeMethod(self, '_notifyWithdrawal')
+        # TODO: adicionar no diagrama de classes e de sequência (receive withdrawal)
+        self.__game.handleWithdrawal()
 
     def __configureFirstWindow(self):
         # Clear widgets

@@ -208,6 +208,9 @@ class Game(QMainWindow):
         else:
             self.goToNextPlayer()
 
+    def handleWithdrawal(self):
+        self.__localPlayer.endTurn()
+    
     @pyqtSlot()
     def processMove(self, move: dict) -> None:
         """

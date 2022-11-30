@@ -77,7 +77,7 @@ class ButtonsStyles:
         border-radius: 28px;
         font-size: 20px;
         font-weight: bold;
-        color: 'green';
+        color: 'black';
         padding: 22px;
         margin-left: 300px;
         margin-right: 300px;
