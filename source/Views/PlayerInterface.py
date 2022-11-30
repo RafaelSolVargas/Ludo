@@ -125,7 +125,6 @@ class PlayerInterface(QMainWindow):
     
     def receive_withdrawal_notification(self):
         QMetaObject.invokeMethod(self, '_notifyWithdrawal')
-        # TODO: adicionar no diagrama de classes e de sequência (receive withdrawal)
         self.__game.handleWithdrawal()
 
     def __configureFirstWindow(self):

@@ -250,7 +250,6 @@ class Game(QMainWindow):
                 # Método para alterar o index interno de Pawn
                 pawn.updatePositionIndex(newPosition)
 
-                # TODO -> Adicionar isso aqui
                 if newPosition == pawn.path[-1]:
                     pawn.status = PawnStatus.FINISHED
 
@@ -270,8 +269,6 @@ class Game(QMainWindow):
                 self.__interface.setNotifyMessage(notifyMessage)
 
     def goToNextPlayer(self) -> Player:
-        # TODO -> Implementar uma modelagem de algoritmo desse método pois não está em nenhum lugar dos diagramas
-        # TODO -> Após implementar método adicionar referência nos diagramas no qual é chamado, são 3 ao todo
         # Para o primeiro caso
         if self.__turnPlayer is None:
             self.__turnPlayer = self.__players[0]
