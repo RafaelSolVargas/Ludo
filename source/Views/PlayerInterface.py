@@ -210,7 +210,7 @@ class PlayerInterface(QMainWindow):
             playersGrid.addWidget(button, 0, column)
         self.__grid.addLayout(playersGrid, 2, 0)
 
-        self.__currentLabel.setText('-')
+        self.__currentLabel.setText('Você está conectado')
 
         # Adiciona o button de Play na grid
         self.__grid.addWidget(self.__playButton, 4, 0)
