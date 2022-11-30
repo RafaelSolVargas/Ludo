@@ -9,7 +9,7 @@ from Config.PlayerColor import PlayerColor
 
 
 class Panel(QWidget):
-    def __init__(self, rollCB: Callable = None, confirmCB: Callable = None):
+    def __init__(self, rollCB: Callable = None, confirmCB: Callable = None, resetCB: Callable = None):
         super().__init__()
         self.setMaximumWidth(800)
         # Settings
@@ -27,6 +27,7 @@ class Panel(QWidget):
         # Buttons
         self.__confirmButton: PushButton = None
         self.__rollButton: RollButton = None
+        self.__resetButton: RollButton = None
 
         # Default Color
         self.__defaultColor: PlayerColor = PlayerColor.BLACK
@@ -39,7 +40,7 @@ class Panel(QWidget):
         self.__setTitleRow()
         self.__setDice()
         self.__setSecondMessageRow(self.__defaultColor)
-        self.__setButtonsRow(rollCB, confirmCB)
+        self.__setButtonsRow(rollCB, confirmCB, resetCB)
 
         self.setLayout(self.grid)
 
@@ -67,11 +68,7 @@ class Panel(QWidget):
 
         self.__turnMessage = message
         self.__setSecondMessageRow(color)
-    
-    def configureResetMatch(self, resetMatchCB: Callable):
-        self.__confirmButton = PushButton(
-            'RESET MATCH', ButtonsStyles.ResetButton, lambda: resetMatchCB())
-    
+
     def __setDice(self):
         # Desenha o dado
         grid_dice = QGridLayout()
@@ -104,13 +101,16 @@ class Panel(QWidget):
         self.grid.addLayout(self.__secondRow, 1, 0)
         self.show()
 
-    def __setButtonsRow(self, rollCB: Callable, confirmPieceCB: Callable) -> None:
+    def __setButtonsRow(self, rollCB: Callable, confirmPieceCB: Callable, resetCB: Callable) -> None:
         self.__buttonsRow = QHBoxLayout()
 
+        self.__resetButton = PushButton(
+            'RESET MATCH', ButtonsStyles.ResetButton, lambda: resetCB())
         self.__rollButton = PushButton('ROLL DICE', ButtonsStyles.RollButton, lambda: rollCB())
         self.__confirmButton = PushButton(
             'CONFIRM PIECE', ButtonsStyles.RollButton, lambda: confirmPieceCB())
 
+        self.__buttonsRow.addWidget(self.__resetButton)
         self.__buttonsRow.addWidget(self.__rollButton)
         self.__buttonsRow.addWidget(self.__confirmButton)
         self.grid.addLayout(self.__buttonsRow, 3, 0)

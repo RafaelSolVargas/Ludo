@@ -22,6 +22,10 @@ class AbstractGame:
         pass
 
     @abstractmethod
+    def handleResetMatch(self) -> None:
+        pass
+
+    @abstractmethod
     def handleConfirmPiece(self) -> None:
         pass
 

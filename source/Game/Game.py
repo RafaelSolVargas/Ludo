@@ -23,6 +23,8 @@ class Game(QMainWindow):
 
         self.__winner: Player = None
         self.__endOfGame: bool = False
+        # TODO -< Adicionar isso
+        self.__canReset: bool = False
 
         self.__turnPlayer: Player = None
 
@@ -137,19 +139,20 @@ class Game(QMainWindow):
 
         self.__interface.setNotifyMessage(message)
 
-    def __sendAllPawnsToHouse(self):
-        for player in self.__players:
-            for pawn in player.pawns:
-                pawn.currentPosition.removePawn()
-                player.house.receivePawn(pawn)
-    
     # TODO: adicionar ao diagrama de sequencia e de classes
     def handleResetMatch(self):
-        self.__sendAllPawnsToHouse()
+        QMetaObject.invokeMethod(self, '_handleResetMatch')
+
+    @pyqtSlot()
+    def _handleResetMatch(self) -> None:
+        if not self.__canReset:
+            return
+
+        self.__canReset = False
+        self.clearPlayers()
         self.goToNextPlayer()
         self.__interface.sendMove(self.__localPlayer, [], False, False, True)
-        
-    
+
     def handleConfirmPiece(self) -> None:
         # TODO -> Revisar todo o diagrama de sequencia disso
         # Caso o jogador não tenha o turno
@@ -189,7 +192,6 @@ class Game(QMainWindow):
                 if pawn.status == PawnStatus.FINISHED:
                     hasWinner = self.verifyWinner(player)
 
-        print("hasWinner: ", hasWinner)
         pawnPositionList = [(pawn.id, pawn.currentPosition.id)]
         self.__interface.sendMove(player, pawnPositionList, player.canRollAgain, hasWinner, False)
 
@@ -199,11 +201,11 @@ class Game(QMainWindow):
         self.__interface.setNotifyMessage('Pawn moved')
         # se o jogador do turno é vencedor
         if hasWinner:
+            # TODO: Adicionar isso aqui no diagrama
+            self.__canReset = True
             self.__interface.setTurnMessage("You won!")
-            # TODO: adicionar ao diagrama de sequencia
-            self.__interface.configureResetMatch()
             return
-        
+
         if player.canRollAgain:
             self.__interface.setTurnMessage('You can play again, roll the dice')
             player.reset()
@@ -218,8 +220,16 @@ class Game(QMainWindow):
         pawnPositionList -> Lista de Tuplas de id de peões e id de positions que eles estão agora: List[Tuple[int, int]]
         playerID -> ID do player que acabou de jogar
         willPlayAgain -> Bool se o jogador irá jogar novamente ou não
+        reset -> Bool se a partida deve ser reiniciada
+        finished -> Bool se a partida tem um vencedor
         """
         print('Processing Move', move)
+        mustReset = self.getMustResetMatchFromMove(move)
+        if mustReset:
+            self.handleResetMatch()
+            return
+        hasWinner = self.getHasWinnerFromMove(move)
+
         pawnPositionList = self.getPawnPositionList(move)
         movePlayer = self.getPlayerFromMove(move)
 
@@ -242,22 +252,18 @@ class Game(QMainWindow):
                 # Método para alterar o index interno de Pawn
                 pawn.updatePositionIndex(newPosition)
 
+                # TODO -> Adicionar isso aqui
+                if newPosition == pawn.path[-1]:
+                    pawn.status = PawnStatus.FINISHED
+
         # Se tiver vencedor o atributo self.__winner será modificado
         self.verifyWinner(movePlayer)
-        print('Winner: ', self.__winner)
-        
-        if move["match_status"] == "finished":
-            self.__interface.setTurnMessage(f'{movePlayer.name} WON', movePlayer.color)
-            # TODO: adicionar ao diagrama de sequencia
-            self.__interface.configureResetMatch()
-            return
 
-        if move["match_status"] == "reset":
-            self.__sendAllPawnsToHouse()
-            self.goToNextPlayer()
-            return
-        
-        if self.__winner == None:
+        # TODO: Verificar se diagrama possui isso
+        if hasWinner:
+            self.__interface.setTurnMessage(f'{movePlayer.name} WON', movePlayer.color)
+            self.__canReset = True
+        else:
             rollAgain = self.checkReroll(move)
             if not rollAgain:
                 self.goToNextPlayer()
@@ -265,7 +271,6 @@ class Game(QMainWindow):
                 notifyMessage = f'{str(movePlayer.color)} will play again'
                 self.__interface.setNotifyMessage(notifyMessage)
                 print(f'Esperando próxima jogada do {movePlayer.color}')
-                
 
     def goToNextPlayer(self) -> Player:
         # TODO -> Implementar uma modelagem de algoritmo desse método pois não está em nenhum lugar dos diagramas
@@ -444,6 +449,12 @@ class Game(QMainWindow):
 
         for player in players:
             player.reset()
+
+    def getMustResetMatchFromMove(self, move: dict) -> bool:
+        return bool(move["reset"])
+
+    def getHasWinnerFromMove(self, move: dict) -> bool:
+        return bool(move["finished"])
 
     def getInvalidPositionMessage(self, code: int) -> str:
         if code == 0:

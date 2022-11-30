@@ -1,8 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit, QLabel
-from PyQt5.QtCore import QMetaObject, pyqtSlot, Q_ARG
-from PyQt5.QtCore import Qt
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PyQt5.QtCore import QMetaObject, pyqtSlot
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Game.Player import Player
@@ -50,12 +47,9 @@ class PlayerInterface(QMainWindow):
         else:
             dictToSend["willPlayAgain"] = str(False)
 
-        if gameFinished:
-            dictToSend["match_status"] = "finished"
-        elif resetGame:
-            dictToSend["match_status"] = "reset"
-        else:
-            dictToSend["match_status"] = "next"
+        dictToSend["match_status"] = "next"
+        dictToSend["reset"] = bool(resetGame)
+        dictToSend["finished"] = bool(gameFinished)
 
         print(f'Mandando move {dictToSend}')
         self.__localActor.send_move(dictToSend)
@@ -111,7 +105,8 @@ class PlayerInterface(QMainWindow):
 
         # Add the widgets
         self.__board = Board(self.__game)
-        self.__panel = Panel(rollCB=self.__handleRollButton, confirmCB=self.__handleConfirmClick)
+        self.__panel = Panel(rollCB=self.__handleRollButton,
+                             confirmCB=self.__handleConfirmClick, resetCB=self.__handleResetClick)
 
         self.__grid.addWidget(self.__board, 0, 0)
         self.__grid.addWidget(self.__panel, 0, 1)
@@ -123,13 +118,6 @@ class PlayerInterface(QMainWindow):
     def receive_withdrawal_notification(self):
         print('Withdraw')
 
-    # TODO: adicionar ao diagrama de classes
-    def configureResetMatch(self):
-        self.__panel.configureResetMatch(self.__handleResetMatch)
-    
-    def __handleResetMatch(self):
-        self.__game.handleResetMatch()
-    
     def __configureFirstWindow(self):
         # Clear widgets
         self.__clear()
@@ -223,18 +211,16 @@ class PlayerInterface(QMainWindow):
         label.setText('Conectado ao servidor!')
         label.setStyleSheet("font-size: 50px; color: white; font-weight: bold;")
         label.move(80, 40)
-        
+
         self.__window.setWindowTitle('LUDO')
         self.__window.setStyleSheet("background: black;")
         self.__window.move(640, 108)
-        
 
         self.__playButton = PushButton(
             'Continue', ButtonsStyles.PlayButton, self.__configureSecondWindow)
 
-        self.__grid.addWidget(label, 0 , 0)
+        self.__grid.addWidget(label, 0, 0)
         self.__grid.addWidget(self.__playButton, 1, 0)
-
 
     def __configureThirdWindow(self):
         if self.__quantPlayers == None:
@@ -284,7 +270,7 @@ class PlayerInterface(QMainWindow):
         self.__game.handleConfirmPiece()
 
     def __handleResetClick(self) -> None:
-        self.__game.clearPlayers()
+        self.__game.handleResetMatch()
 
     def setTurnMessage(self, message: str, color: PlayerColor = PlayerColor.BLACK) -> None:
         self.__panel.setTurnMessage(message, color)
