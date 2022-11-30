@@ -8,8 +8,7 @@ class Dice:
         self.__widget = QWidget()
         self.__width = width
         self.__grid = QGridLayout()
-        # self.__number = randint(1, 6)
-        self.__number = 6
+        self.__number = randint(1, 6)
         self.__style = '''
                     *{
                         border: 4px solid 'black';

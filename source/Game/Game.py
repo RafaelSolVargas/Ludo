@@ -23,7 +23,6 @@ class Game(QMainWindow):
 
         self.__winner: Player = None
         self.__endOfGame: bool = False
-        # TODO -< Adicionar isso
         self.__canReset: bool = False
 
         self.__turnPlayer: Player = None
@@ -40,7 +39,6 @@ class Game(QMainWindow):
     def handleRoll(self) -> None:
         if not self.__localPlayer.hasTurn:
             self.__interface.setNotifyMessage('Not Your Turn')
-            print('Not Your Turn')
             return
         if not self.__localPlayer.canRollDice:
             self.__interface.setNotifyMessage('Dice already rolled')
@@ -139,7 +137,6 @@ class Game(QMainWindow):
 
         self.__interface.setNotifyMessage(message)
 
-    # TODO: adicionar ao diagrama de sequencia e de classes
     def handleResetMatch(self):
         QMetaObject.invokeMethod(self, '_handleResetMatch')
 
@@ -154,7 +151,6 @@ class Game(QMainWindow):
         self.__interface.sendMove(self.__localPlayer, [], False, False, True)
 
     def handleConfirmPiece(self) -> None:
-        # TODO -> Revisar todo o diagrama de sequencia disso
         # Caso o jogador não tenha o turno
         if not self.__localPlayer.hasTurn:
             self.__interface.setNotifyMessage('Not Your Turn')
@@ -201,7 +197,6 @@ class Game(QMainWindow):
         self.__interface.setNotifyMessage('Pawn moved')
         # se o jogador do turno é vencedor
         if hasWinner:
-            # TODO: Adicionar isso aqui no diagrama
             self.__canReset = True
             self.__interface.setTurnMessage("You won!")
             return
@@ -259,9 +254,9 @@ class Game(QMainWindow):
         # Se tiver vencedor o atributo self.__winner será modificado
         self.verifyWinner(movePlayer)
 
-        # TODO: Verificar se diagrama possui isso
         if hasWinner:
             self.__interface.setTurnMessage(f'{movePlayer.name} WON', movePlayer.color)
+            self.__winner = movePlayer
             self.__canReset = True
         else:
             rollAgain = self.checkReroll(move)
@@ -270,7 +265,6 @@ class Game(QMainWindow):
             else:
                 notifyMessage = f'{str(movePlayer.color)} will play again'
                 self.__interface.setNotifyMessage(notifyMessage)
-                print(f'Esperando próxima jogada do {movePlayer.color}')
 
     def goToNextPlayer(self) -> Player:
         # TODO -> Implementar uma modelagem de algoritmo desse método pois não está em nenhum lugar dos diagramas
@@ -311,7 +305,6 @@ class Game(QMainWindow):
         inteiro, caso o Pawn seja diferente de nulo está contendo um peão que foi morto pelo que se movimentou.
         Caso o inteiro seja diferente de 0 é a quantidade overreached que teve
         """
-        # TODO -> Alterar a modelagem de algoritmo de movePawn
         # Inicializa valores padronizados
         hasOverreachedQuant = False
         actualQuantMoved = 0

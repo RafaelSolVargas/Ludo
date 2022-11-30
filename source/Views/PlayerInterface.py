@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QMainWindow, QLineEdit, QLabel
 from PyQt5.QtCore import QMetaObject, pyqtSlot
+from PyQt5 import QtCore
 from Config.ButtonsStyles import ButtonsStyles
 from Config.ImagesPath import ImagesPath
 from Game.Player import Player
@@ -12,6 +13,8 @@ from typing import List, Tuple
 from Dog.start_status import StartStatus
 from Abstractions.AbstractGame import AbstractGame
 from Config.PlayerColor import PlayerColor
+
+# TODO -> Adicionar todas as ocorrências do atributo currentLabel que é o QLabel para textos no inicio
 
 
 class PlayerInterface(QMainWindow):
@@ -135,18 +138,40 @@ class PlayerInterface(QMainWindow):
 
         self.__playerButtons.append(self.__inputText)
         self.__playButton = PushButton(
-            'PLAY', ButtonsStyles.PlayButton, self.__configureConnWindow)
+            'PLAY', ButtonsStyles.PlayButton, self.__configureSecondWindow)
+
+        self.__currentLabel: QLabel = QLabel('-')
+
+        self.__currentLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.__currentLabel.setFixedWidth(500)
+        self.__currentLabel.setFixedHeight(50)
+        self.__currentLabel.setStyleSheet(self.__getStyle())
 
         # Add the widgets to the grid
         self.__grid.addWidget(self.__images[0], 0, 0)
         self.__grid.addWidget(self.__inputText, 1, 0)
         self.__grid.addWidget(self.__playButton, 2, 0)
+        self.__grid.addWidget(self.__currentLabel, 3, 0)
 
         # Configure the grid and start the window
         self.__window.setLayout(self.__grid)
         self.__window.show()
 
     def __configureSecondWindow(self) -> None:
+        self.__playerName = self.__inputText.text()
+
+        if self.__playerName == '':
+            self.__currentLabel.setText('Escolha um nome')
+            return None
+
+        self.__localActor = DogActor()
+        connResult = self.__localActor.initialize(self.__playerName, self)
+
+        # If could not connect then we do not pass to the next window
+        if not self.__successfullyConnected(connResult):
+            self.__currentLabel.setText(connResult)
+            return None
+
         # Clear widgets
         self.__clear()
 
@@ -185,46 +210,15 @@ class PlayerInterface(QMainWindow):
             playersGrid.addWidget(button, 0, column)
         self.__grid.addLayout(playersGrid, 2, 0)
 
+        self.__currentLabel.setText('-')
+
         # Adiciona o button de Play na grid
         self.__grid.addWidget(self.__playButton, 4, 0)
-
-    def __configureConnWindow(self):
-        self.__playerName = self.__inputText.text()
-
-        if self.__playerName == '':
-            print('Escolha um nome')
-            return None
-
-        self.__localActor = DogActor()
-        connResult = self.__localActor.initialize(self.__playerName, self)
-
-        # If could not connect then we do not pass to the next window
-        if not self.__successfullyConnected(connResult):
-            print(connResult)
-            return None
-
-         # Clear widgets
-        self.__clear()
-
-        # Configure the window
-        label = QLabel()
-        label.setText('Conectado ao servidor!')
-        label.setStyleSheet("font-size: 50px; color: white; font-weight: bold;")
-        label.move(80, 40)
-
-        self.__window.setWindowTitle('LUDO')
-        self.__window.setStyleSheet("background: black;")
-        self.__window.move(640, 108)
-
-        self.__playButton = PushButton(
-            'Continue', ButtonsStyles.PlayButton, self.__configureSecondWindow)
-
-        self.__grid.addWidget(label, 0, 0)
-        self.__grid.addWidget(self.__playButton, 1, 0)
+        self.__grid.addWidget(self.__currentLabel, 5, 0)
 
     def __configureThirdWindow(self):
         if self.__quantPlayers == None:
-            self.__notifyMissingParameters()
+            self.__currentLabel.setText('Escolha a quantidade de jogadores')
             return None
 
         print(
@@ -233,9 +227,10 @@ class PlayerInterface(QMainWindow):
 
         failed, message = self.__failedToStartMatch(status)
         if failed:
-            print(message)
+            self.__currentLabel.setText(message)
             return None
 
+        self.__currentLabel = None
         # Desenha a tela
         self._buildBoard()
 
@@ -314,9 +309,17 @@ class PlayerInterface(QMainWindow):
 
         return players
 
-    def __notifyMissingParameters(self) -> None:
-        pass
-
     @property
     def panel(self) -> Panel:
         return self.__panel
+
+    def __getStyle(self) -> str:
+        return '''
+        *{
+            border-top: 2px solid white;
+            border-bottom: 2px solid white;
+            font-size: 25px;
+            font-weight: bold;
+            color: white;
+        }
+        '''
